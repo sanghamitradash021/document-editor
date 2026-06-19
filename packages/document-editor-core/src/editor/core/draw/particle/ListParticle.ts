@@ -1,0 +1,125 @@
+import { PX_PER_PT, ZERO } from '../../../dataset/constant/Common';
+import { ulStyleMapping } from '../../../dataset/constant/List';
+import { KeyMap } from '../../../dataset/enum/KeyMap';
+import { ListStyle, ListType, UlStyle } from '../../../dataset/enum/List';
+import { DeepRequired } from '../../../interface/Common';
+import { IEditorOption } from '../../../interface/Editor';
+import { IElement, IElementPosition } from '../../../interface/Element';
+import { IRow } from '../../../interface/Row';
+import { Draw } from '../Draw';
+
+export class ListParticle {
+  private options: DeepRequired<IEditorOption>;
+
+  // 非递增样式直接返回默认值
+  // Bumped from 20 → 40 to give non-incremental markers (disc / square /
+  // checkbox / etc.) enough hanging-indent room for the wider glyphs and the
+  // 22px marker offset below. Override per list via IListElement.listIndentWidth.
+  private readonly UN_COUNT_STYLE_WIDTH = 40;
+  private readonly MEASURE_BASE_TEXT = '0';
+  private readonly LIST_GAP = 10;
+  // Horizontal nudge applied to the rendered list marker so it sits inside the
+  // hanging-indent column rather than at the row's left edge.
+  private readonly LIST_MARKER_OFFSET_X = 22;
+
+  constructor(draw: Draw) {
+    this.options = draw.getOptions();
+  }
+
+  public computeListStyle(
+    ctx: CanvasRenderingContext2D,
+    elementList: IElement[]
+  ): Map<string, number> {
+    const listStyleMap = new Map<string, number>();
+    let start = 0;
+    let curListId = elementList[start].listId;
+    let curElementList: IElement[] = [];
+    const elementLength = elementList.length;
+    while (start < elementLength) {
+      const curElement = elementList[start];
+      if (curListId && curListId === curElement.listId) {
+        curElementList.push(curElement);
+      } else {
+        if (curElement.listId && curElement.listId !== curListId) {
+          // 列表结束
+          if (curElementList.length) {
+            const width = this.getListStyleWidth(ctx, curElementList);
+            listStyleMap.set(curListId!, width);
+          }
+          curListId = curElement.listId;
+          curElementList = curListId ? [curElement] : [];
+        }
+      }
+      start++;
+    }
+    if (curElementList.length) {
+      const width = this.getListStyleWidth(ctx, curElementList);
+      listStyleMap.set(curListId!, width);
+    }
+    return listStyleMap;
+  }
+
+  public getListStyleWidth(
+    ctx: CanvasRenderingContext2D,
+    listElementList: IElement[]
+  ): number {
+    const { scale } = this.options;
+    const startElement = listElementList[0];
+    // Per-list override (set by importers that need a wider hanging-indent)
+    if (startElement.listIndentWidth) {
+      return startElement.listIndentWidth * scale;
+    }
+    // 非递增样式返回固定值
+    if (
+      startElement.listStyle &&
+      startElement.listStyle !== ListStyle.DECIMAL
+    ) {
+      return this.UN_COUNT_STYLE_WIDTH * scale;
+    }
+    // 计算列表数量
+    const count = listElementList.reduce((pre, cur) => {
+      if (cur.value === ZERO) {
+        pre += 1;
+      }
+      return pre;
+    }, 0);
+    if (!count) return 0;
+    // 以递增样式最大宽度为准
+    const text = `${this.MEASURE_BASE_TEXT.repeat(String(count).length)}${
+      KeyMap.PERIOD
+    }`;
+    const textMetrics = ctx.measureText(text);
+    return Math.ceil((textMetrics.width + this.LIST_GAP) * scale);
+  }
+
+  public drawListStyle(
+    ctx: CanvasRenderingContext2D,
+    row: IRow,
+    position: IElementPosition
+  ) {
+    const { elementList, offsetX, listIndex, ascent } = row;
+    const startElement = elementList[0];
+    if (startElement.value !== ZERO || startElement.listWrap) return;
+    let text = '';
+    if (startElement.listType === ListType.UL) {
+      text =
+        ulStyleMapping[<UlStyle>(<unknown>startElement.listStyle)] ||
+        ulStyleMapping[UlStyle.DISC];
+    } else {
+      text = `${listIndex! + 1}${KeyMap.PERIOD}`;
+    }
+    if (!text) return;
+    const {
+      coordinate: {
+        leftTop: [startX, startY],
+      },
+    } = position;
+    const x = startX - offsetX!;
+    const y = startY + ascent;
+    const { defaultFont, defaultSize, scale } = this.options;
+    ctx.save();
+    ctx.font = `${defaultSize * scale * PX_PER_PT}px ${defaultFont}`;
+    ctx.fillText(text, x + this.LIST_MARKER_OFFSET_X, y);
+    ctx.restore();
+  }
+}

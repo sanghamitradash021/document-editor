@@ -1,0 +1,544 @@
+import { ElementType, IElement, TableBorder } from '../../../..';
+import { IEditorOption } from '../../../../interface/Editor';
+import { ITd } from '../../../../interface/table/Td';
+import { ITr } from '../../../../interface/table/Tr';
+import { deepClone } from '../../../../utils';
+import { RangeManager } from '../../../range/RangeManager';
+import { Draw } from '../../Draw';
+
+interface IDrawTableBorderOption {
+  ctx: CanvasRenderingContext2D;
+  startX: number;
+  startY: number;
+  width: number;
+  height: number;
+  isDrawFullBorder?: boolean;
+}
+
+export class TableParticle {
+  private draw: Draw;
+  private range: RangeManager;
+  private options: Required<IEditorOption>;
+
+  constructor(draw: Draw) {
+    this.draw = draw;
+    this.range = draw.getRange();
+    this.options = draw.getOptions();
+  }
+
+  public getTrListGroupByCol(payload: ITr[]): ITr[] {
+    const trList = deepClone(payload);
+    for (let t = 0; t < payload.length; t++) {
+      const tr = trList[t];
+      for (let d = tr.tdList.length - 1; d >= 0; d--) {
+        const td = tr.tdList[d];
+        const { rowspan, rowIndex, colIndex } = td;
+        const curRowIndex = rowIndex! + rowspan - 1;
+        if (curRowIndex !== d) {
+          const changeTd = tr.tdList.splice(d, 1)[0];
+          trList[curRowIndex].tdList.splice(colIndex!, 0, changeTd);
+        }
+      }
+    }
+    return trList;
+  }
+
+  public getRangeRowCol(): ITd[][] | null {
+    const { isTable, index, trIndex, tdIndex } = this.draw
+      .getPosition()
+      .getPositionContext();
+    if (!isTable) return null;
+    const {
+      isCrossRowCol,
+      startTdIndex,
+      endTdIndex,
+      startTrIndex,
+      endTrIndex,
+    } = this.range.getRange();
+    const originalElementList = this.draw.getOriginalElementList();
+    const element = originalElementList[index!];
+    const curTrList = element.trList!;
+    // 非跨列直接返回光标所在单元格
+    if (!isCrossRowCol) {
+      return [[curTrList[trIndex!].tdList[tdIndex!]]];
+    }
+    let startTd = curTrList[startTrIndex!].tdList[startTdIndex!];
+    let endTd = curTrList[endTrIndex!].tdList[endTdIndex!];
+    // 交换起始位置
+    if (startTd.x! > endTd.x! || startTd.y! > endTd.y!) {
+      // prettier-ignore
+      [startTd, endTd] = [endTd, startTd]
+    }
+    const startColIndex = startTd.colIndex!;
+    const endColIndex = endTd.colIndex! + (endTd.colspan - 1);
+    const startRowIndex = startTd.rowIndex!;
+    const endRowIndex = endTd.rowIndex! + (endTd.rowspan - 1);
+    // 选区行列
+    const rowCol: ITd[][] = [];
+    for (let t = 0; t < curTrList.length; t++) {
+      const tr = curTrList[t];
+      const tdList: ITd[] = [];
+      for (let d = 0; d < tr.tdList.length; d++) {
+        const td = tr.tdList[d];
+        const tdColIndex = td.colIndex!;
+        const tdRowIndex = td.rowIndex!;
+        if (
+          tdColIndex >= startColIndex &&
+          tdColIndex <= endColIndex &&
+          tdRowIndex >= startRowIndex &&
+          tdRowIndex <= endRowIndex
+        ) {
+          tdList.push(td);
+        }
+      }
+      if (tdList.length) {
+        rowCol.push(tdList);
+      }
+    }
+    return rowCol.length ? rowCol : null;
+  }
+
+  // private _drawOuterBorder(payload: IDrawTableBorderOption) {
+  //   const { ctx, startX, startY, width, height, isDrawFullBorder } = payload
+  //   ctx.beginPath()
+  //   const x = Math.round(startX)
+  //   const y = Math.round(startY)
+  //   ctx.translate(0.5, 0.5)
+  //   if (isDrawFullBorder) {
+  //     ctx.rect(x, y, width, height)
+  //   } else {
+  //     ctx.moveTo(x, y + height)
+  //     ctx.lineTo(x, y)
+  //     ctx.lineTo(x + width, y)
+  //   }
+  //   ctx.stroke()
+  //   ctx.translate(-0.5, -0.5)
+  // }
+
+  private _drawOuterBorderWithBg(
+    payload: IDrawTableBorderOption & { trList?: ITr[] }
+  ) {
+    const { ctx, startX, startY, trList } = payload;
+    const { scale } = this.options;
+    if (!trList) return;
+    const x = Math.round(startX);
+    const y = Math.round(startY);
+    ctx.translate(0.5, 0.5);
+    let currentY = y;
+    trList.forEach(tr => {
+      tr.tdList.forEach((td, i) => {
+        if (i > 0) return;
+        ctx.beginPath();
+        ctx.moveTo(x, currentY);
+        currentY += td.height! * scale;
+        ctx.strokeStyle = td.borderBgLeft ?? 'black';
+        ctx.lineWidth = td.borderWidthLeft ?? 1;
+        ctx.lineTo(x, currentY);
+        ctx.stroke();
+        ctx.closePath();
+      });
+    });
+
+    let currentX = x;
+    trList[0].tdList.forEach(td => {
+      ctx.beginPath();
+      ctx.moveTo(currentX, y);
+      currentX += td.width! * scale;
+      ctx.strokeStyle = td.borderBgTop ?? 'black';
+      ctx.lineWidth = td.borderWidthTop ?? 1;
+      ctx.lineTo(currentX, y);
+      ctx.stroke();
+      ctx.closePath();
+    });
+
+    ctx.strokeStyle = 'black';
+    ctx.translate(-0.5, -0.5);
+  }
+
+  private _drawBorder(
+    ctx: CanvasRenderingContext2D,
+    element: IElement,
+    startX: number,
+    startY: number
+  ) {
+    const { colgroup, trList, borderType } = element;
+    // if (!colgroup || !trList || borderType === TableBorder.EMPTY) return
+    if (!colgroup || !trList) return;
+    const { scale } = this.options;
+    const tableWidth = element.width! * scale;
+    const tableHeight = element.height! * scale;
+    const isExternalBorderType = borderType === TableBorder.EXTERNAL;
+    ctx.save();
+    // 渲染边框
+    // this._drawOuterBorder({
+    //   ctx,
+    //   startX,
+    //   startY,
+    //   width: tableWidth,
+    //   height: tableHeight,
+    //   isDrawFullBorder: isExternalBorderType
+    // })
+
+    this._drawOuterBorderWithBg({
+      ctx,
+      startX,
+      startY,
+      width: tableWidth,
+      height: tableHeight,
+      isDrawFullBorder: isExternalBorderType,
+      trList: element.trList,
+    });
+
+    // Google-Docs-style page-break separator at the top: if first row was
+    // marked as a continuation (split from a previous page), overlay the
+    // table-top border as a thick-left + thin-right line spanning page
+    // content width.
+    const firstTr = element.trList?.[0];
+    if (firstTr?.tdList.some(td => td.isPageBreakBorderTop)) {
+      const color = firstTr.tdList.find(
+        td => td.isPageBreakBorderTop
+      )?.borderBgTop;
+      if (color) {
+        this._drawPageBreakSeparator(ctx, Math.round(startY), color);
+      }
+    }
+
+    // if (!isExternalBorderType) {
+    // 渲染表格
+    for (let t = 0; t < trList.length; t++) {
+      const tr = trList[t];
+      for (let d = 0; d < tr.tdList.length; d++) {
+        const td = tr.tdList[d];
+        const tdNext = tr.tdList[d + 1];
+        const trNext = trList[t + 1]?.tdList[d];
+        const width = td.width! * scale;
+        const height = td.height! * scale;
+        const x = Math.round(td.x! * scale + startX + width);
+        const y = Math.round(td.y! * scale + startY);
+        ctx.translate(0.5, 0.5);
+        // 绘制线条
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.strokeStyle = td.borderBgRight
+          ? td.borderBgRight
+          : tdNext?.borderBgLeft
+            ? tdNext?.borderBgLeft
+            : 'black';
+        ctx.lineWidth = td.borderWidthRight
+          ? td.borderWidthRight
+          : tdNext?.borderWidthLeft
+            ? tdNext?.borderWidthLeft
+            : 1;
+        ctx.lineTo(x, y + height); // border-right
+        ctx.stroke();
+        ctx.closePath();
+        ctx.beginPath();
+        // Pick the heavier of this cell's bottom border and the next
+        // row's same-column top border. DOCX rows often declare a thin
+        // bottom and the row below declares a thick top (or vice-versa);
+        // drawing only the current cell's bottom collapses inter-row
+        // dividers to whichever value was authored first, even when the
+        // other side is thicker. Choosing the heavier value keeps thick
+        // section dividers intact while still letting page-end show the
+        // row's own (thin) bottom line when there is no next row.
+        const bottomCandidates = [
+          { color: td.borderBgBottom, width: td.borderWidthBottom },
+          { color: trNext?.borderBgTop, width: trNext?.borderWidthTop },
+        ].filter(b => !!b.color || b.width != null);
+        const chosen = bottomCandidates.length
+          ? bottomCandidates.reduce((a, b) =>
+              (b.width ?? 0) > (a.width ?? 0) ? b : a
+            )
+          : { color: 'black', width: 1 };
+        ctx.strokeStyle = chosen.color || 'black';
+        ctx.lineWidth = chosen.width || 1;
+
+        ctx.moveTo(x, y + height);
+        ctx.lineTo(x - width, y + height); //border-bottom
+        ctx.stroke();
+        ctx.closePath();
+
+        //         type Border = {
+        //   color?: string
+        //   width?: number
+        // }
+
+        // const bottomCandidates: Border[] = [
+        //   { color: td.borderBgBottom, width: td.borderWidthBottom },
+        //   { color: trNext?.borderBgTop, width: trNext?.borderWidthTop }
+        // ].filter(b => !!b.color)
+
+        // const chosen: Border = bottomCandidates.length
+        //   ? bottomCandidates.reduce((a, b) =>
+        //       (b.width ?? 0) > (a.width ?? 0) ? b : a
+        //     )
+        //   : { color: 'black', width: 1 }
+
+        // const separatorY = y + height
+
+        // // content boundaries (align with text margins, not page edges)
+        // const margins = this.draw.getMargins()
+        // const pageLeft = margins[3]
+        // const pageRight = this.options.width - margins[1]
+
+        // // Google Docs–like left thick cap
+        // // const thickPartLength = 85
+        // const thickPartLength = Math.min(90, (pageRight - pageLeft) * 0.12)
+
+        // ctx.strokeStyle = chosen.color || 'red'
+
+        // // LEFT THICK PART (3px, longer)
+        // ctx.beginPath()
+        // ctx.lineWidth = 3
+
+        // ctx.moveTo(pageLeft, separatorY)
+        // ctx.lineTo(pageLeft + thickPartLength, separatorY)
+
+        // ctx.stroke()
+
+        // // RIGHT THIN PART (1px)
+        // ctx.beginPath()
+        // ctx.lineWidth = 1
+
+        // // start exactly where thick part ended
+        // ctx.moveTo(pageLeft + thickPartLength, separatorY)
+        // ctx.lineTo(pageRight, separatorY)
+
+        // ctx.stroke()
+
+        // ctx.closePath()
+        ctx.translate(-0.5, -0.5);
+      }
+    }
+    // Google-Docs-style page-break separator at the bottom: if last row was
+    // marked as the end-of-page chunk, overlay the table-bottom border as a
+    // thick-left + thin-right line spanning page content width.
+    const lastTr = trList[trList.length - 1];
+    if (lastTr?.tdList.some(td => td.isPageBreakBorderBottom)) {
+      const color = lastTr.tdList.find(
+        td => td.isPageBreakBorderBottom
+      )?.borderBgBottom;
+      if (color) {
+        const bottomY = Math.round(
+          (lastTr.tdList[0].y! + lastTr.tdList[0].height!) *
+            this.options.scale +
+            startY
+        );
+        this._drawPageBreakSeparator(ctx, bottomY, color);
+      }
+    }
+    // }
+    ctx.restore();
+  }
+
+  private _drawPageBreakSeparator(
+    ctx: CanvasRenderingContext2D,
+    y: number,
+    color: string
+  ) {
+    const margins = this.draw.getMargins();
+    const pageLeft = margins[3];
+    const pageRight = this.options.width - margins[1];
+    const thickPartLength = Math.min(150, (pageRight - pageLeft) * 0.2);
+
+    ctx.save();
+    ctx.strokeStyle = color;
+    // LEFT THICK PART (3px)
+    ctx.beginPath();
+    ctx.lineWidth = 3;
+    ctx.moveTo(pageLeft, y);
+    ctx.lineTo(pageLeft + thickPartLength, y);
+    ctx.stroke();
+    ctx.closePath();
+    // RIGHT THIN PART (1px)
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.moveTo(pageLeft + thickPartLength, y);
+    ctx.lineTo(pageRight, y);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.restore();
+  }
+
+  private _drawBackgroundColor(
+    ctx: CanvasRenderingContext2D,
+    element: IElement,
+    startX: number,
+    startY: number
+  ) {
+    const { trList } = element;
+    if (!trList) return;
+    const { scale } = this.options;
+    for (let t = 0; t < trList.length; t++) {
+      const tr = trList[t];
+      for (let d = 0; d < tr.tdList.length; d++) {
+        const td = tr.tdList[d];
+        if (!td.backgroundColor) continue;
+        ctx.save();
+        const width = td.width! * scale;
+        const height = td.height! * scale;
+        const x = Math.round(td.x! * scale + startX);
+        const y = Math.round(td.y! * scale + startY);
+        ctx.fillStyle = td.backgroundColor;
+        ctx.fillRect(x, y, width, height);
+        ctx.restore();
+      }
+    }
+  }
+
+  public computeRowColInfo(element: IElement) {
+    const { colgroup, trList } = element;
+    if (!colgroup || !trList) return;
+    let x = 0;
+    let y = 0;
+    for (let t = 0; t < trList.length; t++) {
+      const tr = trList[t];
+      // 表格最后一行
+      const isLastTr = trList.length - 1 === t;
+      // 当前行最小高度
+      let rowMinHeight = 0;
+      for (let d = 0; d < tr.tdList.length; d++) {
+        const td = tr.tdList[d];
+        // 计算之前行x轴偏移量
+        let offsetXIndex = 0;
+        if (trList.length > 1 && t !== 0) {
+          for (let pT = 0; pT < t; pT++) {
+            const pTr = trList[pT];
+            // 相同x轴是否存在跨行
+            for (let pD = 0; pD < pTr.tdList.length; pD++) {
+              const pTd = pTr.tdList[pD];
+              const pTdX = pTd.x!;
+              const pTdY = pTd.y!;
+              const pTdWidth = pTd.width!;
+              const pTdHeight = pTd.height!;
+              // 小于
+              if (pTdX < x) continue;
+              if (pTdX > x) break;
+              if (pTd.x === x && pTdY + pTdHeight > y) {
+                x += pTdWidth;
+                offsetXIndex += pTd.colspan;
+              }
+            }
+          }
+        }
+        // 计算格列数
+        let colIndex = 0;
+        const preTd = tr.tdList[d - 1];
+        if (preTd) {
+          colIndex = preTd.colIndex! + offsetXIndex + 1;
+          if (preTd.colspan > 1) {
+            colIndex += preTd.colspan - 1;
+          }
+        } else {
+          colIndex += offsetXIndex;
+        }
+        // 计算格宽高
+        let width = 0;
+        for (let col = 0; col < td.colspan; col++) {
+          width += colgroup[col + colIndex].width;
+        }
+        let height = 0;
+        for (let row = 0; row < td.rowspan; row++) {
+          height += trList[row + t].height;
+        }
+        // y偏移量
+        if (rowMinHeight === 0 || rowMinHeight > height) {
+          rowMinHeight = height;
+        }
+        // 当前行最后一个td
+        const isLastRowTd = tr.tdList.length - 1 === d;
+        // 当前列最后一个td
+        let isLastColTd = isLastTr;
+        if (!isLastColTd) {
+          if (td.rowspan > 1) {
+            const nextTrLength = trList.length - 1 - t;
+            isLastColTd = td.rowspan - 1 === nextTrLength;
+          }
+        }
+        // 当前表格最后一个td
+        const isLastTd = isLastTr && isLastRowTd;
+        td.isLastRowTd = isLastRowTd;
+        td.isLastColTd = isLastColTd;
+        td.isLastTd = isLastTd;
+        // 修改当前格clientBox
+        td.x = x;
+        td.y = y;
+        td.width = width;
+        td.height = height;
+        td.rowIndex = t;
+        td.colIndex = colIndex;
+        // 当前列x轴累加
+        x += width;
+        // 一行中的最后td
+        if (isLastRowTd && !isLastTd) {
+          x = 0;
+          y += rowMinHeight;
+        }
+      }
+    }
+  }
+
+  public drawRange(
+    ctx: CanvasRenderingContext2D,
+    element: IElement,
+    startX: number,
+    startY: number
+  ) {
+    const { scale, rangeAlpha, rangeColor } = this.options;
+    const { type, trList } = element;
+    if (!trList || type !== ElementType.TABLE) return;
+    const {
+      isCrossRowCol,
+      startTdIndex,
+      endTdIndex,
+      startTrIndex,
+      endTrIndex,
+    } = this.range.getRange();
+    // 存在跨行/列
+    if (!isCrossRowCol) return;
+    let startTd = trList[startTrIndex!].tdList[startTdIndex!];
+    let endTd = trList[endTrIndex!].tdList[endTdIndex!];
+    // 交换起始位置
+    if (startTd.x! > endTd.x! || startTd.y! > endTd.y!) {
+      [startTd, endTd] = [endTd, startTd];
+    }
+    const startColIndex = startTd.colIndex!;
+    const endColIndex = endTd.colIndex! + (endTd.colspan - 1);
+    const startRowIndex = startTd.rowIndex!;
+    const endRowIndex = endTd.rowIndex! + (endTd.rowspan - 1);
+    ctx.save();
+    for (let t = 0; t < trList.length; t++) {
+      const tr = trList[t];
+      for (let d = 0; d < tr.tdList.length; d++) {
+        const td = tr.tdList[d];
+        const tdColIndex = td.colIndex!;
+        const tdRowIndex = td.rowIndex!;
+        if (
+          tdColIndex >= startColIndex &&
+          tdColIndex <= endColIndex &&
+          tdRowIndex >= startRowIndex &&
+          tdRowIndex <= endRowIndex
+        ) {
+          const x = td.x! * scale;
+          const y = td.y! * scale;
+          const width = td.width! * scale;
+          const height = td.height! * scale;
+          ctx.globalAlpha = rangeAlpha;
+          ctx.fillStyle = rangeColor;
+          ctx.fillRect(x + startX, y + startY, width, height);
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  public render(
+    ctx: CanvasRenderingContext2D,
+    element: IElement,
+    startX: number,
+    startY: number
+  ) {
+    this._drawBackgroundColor(ctx, element, startX, startY);
+    this._drawBorder(ctx, element, startX, startY);
+  }
+}
