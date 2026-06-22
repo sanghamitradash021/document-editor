@@ -98,9 +98,9 @@
     "react": "^18.2.0"
   },
   "dependencies": {
-    "@mindfiredigital/canvas-editor": "^1.3.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@mindfiredigital/canvas-editor": "file:.yalc/@mindfiredigital/canvas-editor",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
     "@r2wc/react-to-web-component": "^2.0.3",
