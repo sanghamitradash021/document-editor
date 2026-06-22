@@ -13,11 +13,9 @@ interface IAnchorMouseDown {
 }
 
 export class TableTool {
-  // 单元格最小宽度
   private readonly MIN_TD_WIDTH = 20;
-  // 行列工具相对表格偏移值
   private readonly ROW_COL_OFFSET = 18;
-  // 边框工具宽/高度
+  // /
   private readonly BORDER_VALUE = 4;
 
   private draw: Draw;
@@ -38,7 +36,7 @@ export class TableTool {
     this.options = draw.getOptions();
     this.position = draw.getPosition();
     this.container = draw.getContainer();
-    // x、y轴
+    // x、y
     this.toolRowContainer = null;
     this.toolColContainer = null;
     this.toolBorderContainer = null;
@@ -60,9 +58,7 @@ export class TableTool {
     const { isTable, index, trIndex, tdIndex } =
       this.position.getPositionContext();
     if (!isTable) return;
-    // 销毁之前工具
     this.dispose();
-    // 渲染所需数据
     const { scale } = this.options;
     const elementList = this.draw.getOriginalElementList();
     const positionList = this.position.getOriginalPositionList();
@@ -80,7 +76,6 @@ export class TableTool {
     const td = element.trList![trIndex!].tdList[tdIndex!];
     const rowIndex = td.rowIndex;
     const colIndex = td.colIndex;
-    // 渲染行工具
     const rowHeightList = trList!.map(tr => tr.height);
     const rowContainer = document.createElement('div');
     rowContainer.classList.add(`${EDITOR_PREFIX}-table-tool__row`);
@@ -113,7 +108,6 @@ export class TableTool {
     this.container.append(rowContainer);
     this.toolRowContainer = rowContainer;
 
-    // 渲染列工具
     const colWidthList = colgroup!.map(col => col.width);
     const colContainer = document.createElement('div');
     colContainer.classList.add(`${EDITOR_PREFIX}-table-tool__col`);
@@ -146,7 +140,6 @@ export class TableTool {
     this.container.append(colContainer);
     this.toolColContainer = colContainer;
 
-    // 渲染单元格边框拖拽工具
     const tableHeight = element.height! * scale;
     const tableWidth = element.width! * scale;
     const borderContainer = document.createElement('div');
@@ -211,11 +204,9 @@ export class TableTool {
     this.mousedownY = evt.y;
     const target = evt.target as HTMLDivElement;
     const canvasRect = this.canvas.getBoundingClientRect();
-    // 改变光标
     const cursor = window.getComputedStyle(target).cursor;
     document.body.style.cursor = cursor;
     this.canvas.style.cursor = cursor;
-    // 拖拽线
     let startX = 0;
     let startY = 0;
     const anchorLine = document.createElement('div');
@@ -235,7 +226,6 @@ export class TableTool {
     anchorLine.style.top = `${startY}px`;
     this.container.append(anchorLine);
     this.anchorLine = anchorLine;
-    // 追加全局事件
     let dx = 0;
     let dy = 0;
     const mousemoveFn = (evt: MouseEvent) => {
@@ -250,10 +240,9 @@ export class TableTool {
       'mouseup',
       () => {
         let isChangeSize = false;
-        // 改变尺寸
         if (order === TableOrder.ROW) {
           const tr = element.trList![index];
-          // 最大移动高度-向上移动超出最小高度限定，则减少移动量
+          // -，
           const { defaultTrMinHeight } = this.options;
           if (dy < 0 && tr.height + dy < defaultTrMinHeight) {
             dy = defaultTrMinHeight - tr.height;
@@ -266,14 +255,13 @@ export class TableTool {
         } else {
           const { colgroup } = element;
           if (colgroup && dx) {
-            // 宽度分配
             const innerWidth = this.draw.getInnerWidth();
             const curColWidth = colgroup[index].width;
-            // 最小移动距离计算-如果向左移动：使单元格小于最小宽度，则减少移动量
+            // -：，
             if (dx < 0 && curColWidth + dx < this.MIN_TD_WIDTH) {
               dx = this.MIN_TD_WIDTH - curColWidth;
             }
-            // 最大移动距离计算-如果向右移动：使后面一个单元格小于最小宽度，则减少移动量
+            // -：，
             const nextColWidth = colgroup[index + 1]?.width;
             if (
               dx > 0 &&
@@ -283,15 +271,12 @@ export class TableTool {
               dx = nextColWidth - this.MIN_TD_WIDTH;
             }
             const moveColWidth = curColWidth + dx;
-            // 开始移动
             let moveTableWidth = 0;
             for (let c = 0; c < colgroup.length; c++) {
               const group = colgroup[c];
-              // 下一列减去偏移量
               if (c === index + 1) {
                 moveTableWidth -= dx;
               }
-              // 当前列加上偏移量
               if (c === index) {
                 moveTableWidth += moveColWidth;
               }
@@ -304,7 +289,6 @@ export class TableTool {
               dx = innerWidth - tableWidth;
             }
             if (dx) {
-              // 当前列增加，后列减少
               if (colgroup.length - 1 !== index) {
                 colgroup[index + 1].width -= dx / scale;
               }
@@ -316,7 +300,6 @@ export class TableTool {
         if (isChangeSize) {
           this.draw.render({ isSetCursor: false });
         }
-        // 还原副作用
         anchorLine.remove();
         document.removeEventListener('mousemove', mousemoveFn);
         document.body.style.cursor = '';

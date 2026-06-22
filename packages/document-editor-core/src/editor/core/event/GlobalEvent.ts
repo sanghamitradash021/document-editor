@@ -70,7 +70,7 @@ export class GlobalEvent {
 
   public clearSideEffect = (evt: Event) => {
     if (!this.cursor) return;
-    // 编辑器内部dom
+    // dom
     const target = <Element>(evt?.composedPath()[0] || evt.target);
     const pageList = this.draw.getPageList();
     const innerEditorDom = findParent(
@@ -82,7 +82,7 @@ export class GlobalEvent {
       this.setRangeStyle();
       return;
     }
-    // 编辑器外部组件dom
+    // dom
     const outerEditorDom = findParent(
       target,
       (node: Node & Element) =>
@@ -113,10 +113,9 @@ export class GlobalEvent {
   };
 
   public watchCursorActive() {
-    // 选区闭合&实际光标移出光标代理
+    // &
     if (!this.range.getIsCollapsed()) return;
     setTimeout(() => {
-      // 将模拟光标变成失活显示状态
       if (!this.cursor?.getAgentIsActive()) {
         this.cursor?.drawCursor({
           isFocus: false,
@@ -131,13 +130,11 @@ export class GlobalEvent {
     evt.preventDefault();
     const { scale } = this.options;
     if (evt.deltaY < 0) {
-      // 放大
       const nextScale = scale * 10 + 1;
       if (nextScale <= 30) {
         this.draw.setPageScale(nextScale / 10);
       }
     } else {
-      // 缩小
       const nextScale = scale * 10 - 1;
       if (nextScale >= 5) {
         this.draw.setPageScale(nextScale / 10);

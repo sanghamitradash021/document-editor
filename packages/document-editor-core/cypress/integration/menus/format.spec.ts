@@ -1,6 +1,6 @@
 import Editor from '../../../src/editor';
 
-describe('菜单-清除格式', () => {
+describe('-', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/canvas-editor/');
 
@@ -10,7 +10,7 @@ describe('菜单-清除格式', () => {
   const text = 'canvas-editor';
   const textLength = text.length;
 
-  it('清除格式', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 

@@ -1,4 +1,3 @@
-// 复制内容时带入版权信息，代码仅为参考
 import Editor from '../../editor';
 
 export interface ICopyWithCopyrightOption {

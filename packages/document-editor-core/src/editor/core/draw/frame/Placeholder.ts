@@ -65,7 +65,6 @@ export class Placeholder {
     } = this.options;
     if (!data) return;
     this._recovery();
-    // 构建元素列表并格式化
     this.elementList = [
       {
         value: data,
@@ -77,10 +76,8 @@ export class Placeholder {
     formatElementList(this.elementList, {
       editorOptions: this.options,
     });
-    // 计算
     this._compute();
     const innerWidth = this.draw.getInnerWidth();
-    // 绘制
     ctx.save();
     ctx.globalAlpha = opacity;
     this.draw.drawRow(ctx, {

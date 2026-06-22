@@ -104,7 +104,7 @@ export class Header {
   }
 
   public getExtraHeight(): number {
-    // 页眉上边距 + 实际高 - 页面上边距
+    // + -
     const margins = this.draw.getMargins();
     const headerHeight = this.getHeight();
     const headerTop = this.getHeaderTop();
@@ -116,7 +116,6 @@ export class Header {
     ctx.globalAlpha = 1;
     const innerWidth = this.draw.getInnerWidth();
     const maxHeight = this.getMaxHeight();
-    // 超出最大高度不渲染
     const rowList: IRow[] = [];
     let curRowHeight = 0;
     for (let r = 0; r < this.rowList.length; r++) {

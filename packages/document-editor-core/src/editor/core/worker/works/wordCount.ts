@@ -19,7 +19,6 @@ function pickText(elementList: IElement[]): string {
   let e = 0;
   while (e < elementList.length) {
     const element = elementList[e];
-    // 表格、超链接递归处理
     if (element.type === ElementType.TABLE) {
       if (element.trList) {
         for (let t = 0; t < element.trList.length; t++) {
@@ -61,7 +60,6 @@ function pickText(elementList: IElement[]): string {
       }
       text += pickText(valueList);
     }
-    // 文本追加
     if (!element.type || element.type === ElementType.TEXT) {
       text += element.value;
     }
@@ -72,15 +70,13 @@ function pickText(elementList: IElement[]): string {
 
 function groupText(text: string): string[] {
   const characterList: string[] = [];
-  // 英文或数字整体分隔为一个字数
   const numberReg = /[0-9]/;
   const letterReg = /[A-Za-z]/;
   const blankReg = /\s/;
-  // for of 循环字符
+  // for of
   let isPreLetter = false;
   let isPreNumber = false;
   let compositionText = '';
-  // 处理组合文本
   function pushCompositionText() {
     if (compositionText) {
       characterList.push(compositionText);
@@ -117,13 +113,10 @@ function groupText(text: string): string[] {
 
 onmessage = evt => {
   const elementList = <IElement[]>evt.data;
-  // 提取文本
   const originText = pickText(elementList);
-  // 过滤文本
   const filterText = originText
     .replace(new RegExp(`^${ZERO}`), '')
     .replace(new RegExp(ZERO, 'g'), WRAP);
-  // 文本分组
   const textGroup = groupText(filterText);
   postMessage(textGroup.length);
 };

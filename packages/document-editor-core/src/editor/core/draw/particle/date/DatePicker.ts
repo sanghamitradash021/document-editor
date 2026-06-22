@@ -87,7 +87,7 @@ export class DatePicker {
   private _createDom(): IDatePickerDom {
     const datePickerContainer = document.createElement('div');
     datePickerContainer.classList.add(`${EDITOR_PREFIX}-date-container`);
-    // title-切换年月、年月显示
+    // title-、
     const dateWrap = document.createElement('div');
     dateWrap.classList.add(`${EDITOR_PREFIX}-date-wrap`);
     const datePickerTitle = document.createElement('div');
@@ -111,7 +111,7 @@ export class DatePicker {
     datePickerTitle.append(nowTitle);
     datePickerTitle.append(nextMonthTitle);
     datePickerTitle.append(nextYearTitle);
-    // week-星期显示
+    // week-
     const datePickerWeek = document.createElement('div');
     datePickerWeek.classList.add(`${EDITOR_PREFIX}-date-week`);
     const {
@@ -123,14 +123,13 @@ export class DatePicker {
       weekDom.innerText = `${week}`;
       datePickerWeek.append(weekDom);
     });
-    // day-天数显示
+    // day-
     const datePickerDay = document.createElement('div');
     datePickerDay.classList.add(`${EDITOR_PREFIX}-date-day`);
-    // 日期内容构建
     dateWrap.append(datePickerTitle);
     dateWrap.append(datePickerWeek);
     dateWrap.append(datePickerDay);
-    // time-时间选择
+    // time-
     const timeWrap = document.createElement('ul');
     timeWrap.classList.add(`${EDITOR_PREFIX}-time-wrap`);
     let hourTime: HTMLOListElement;
@@ -162,7 +161,7 @@ export class DatePicker {
       li.append(ol);
       timeWrap.append(li);
     });
-    // menu-选择时间、现在、确定
+    // menu-、、
     const datePickerMenu = document.createElement('div');
     datePickerMenu.classList.add(`${EDITOR_PREFIX}-date-menu`);
     const timeMenu = document.createElement('button');
@@ -177,7 +176,6 @@ export class DatePicker {
     datePickerMenu.append(timeMenu);
     datePickerMenu.append(nowMenu);
     datePickerMenu.append(submitMenu);
-    // 构建
     datePickerContainer.append(dateWrap);
     datePickerContainer.append(timeWrap);
     datePickerContainer.append(datePickerMenu);
@@ -270,7 +268,6 @@ export class DatePicker {
       },
       startTop,
     } = this.renderOptions;
-    // 位置
     this.dom.container.style.left = `${left}px`;
     this.dom.container.style.top = `${top + (startTop || 0) + lineHeight}px`;
   }
@@ -317,12 +314,10 @@ export class DatePicker {
   }
 
   private _update() {
-    // 本地年月日
     const localDate = new Date();
     const localYear = localDate.getFullYear();
     const localMonth = localDate.getMonth() + 1;
     const localDay = localDate.getDate();
-    // 选择年月日
     let pickYear: number | null = null;
     let pickMonth: number | null = null;
     let pickDay: number | null = null;
@@ -331,22 +326,19 @@ export class DatePicker {
       pickMonth = this.pickDate.getMonth() + 1;
       pickDay = this.pickDate.getDate();
     }
-    // 当前年月日
     const year = this.now.getFullYear();
     const month = this.now.getMonth() + 1;
     this.dom.title.now.innerText = `${year}${this.lang.year} ${String(
       month
     ).padStart(2, '0')}${this.lang.month}`;
-    // 日期补差
-    const curDate = new Date(year, month, 0); // 当月日期
-    const curDay = curDate.getDate(); // 当月总天数
-    let curWeek = new Date(year, month - 1, 1).getDay(); // 当月第一天星期几
+    const curDate = new Date(year, month, 0); //
+    const curDay = curDate.getDate(); //
+    let curWeek = new Date(year, month - 1, 1).getDay(); //
     if (curWeek === 0) {
       curWeek = 7;
     }
-    const preDay = new Date(year, month - 1, 0).getDate(); // 上个月天数
+    const preDay = new Date(year, month - 1, 0).getDate(); //
     this.dom.day.innerHTML = '';
-    // 渲染上个月日期
     const preStartDay = preDay - curWeek + 1;
     for (let i = preStartDay; i <= preDay; i++) {
       const dayDom = document.createElement('div');
@@ -359,7 +351,6 @@ export class DatePicker {
       };
       this.dom.day.append(dayDom);
     }
-    // 渲染当月日期
     for (let i = 1; i <= curDay; i++) {
       const dayDom = document.createElement('div');
       if (localYear === year && localMonth === month && localDay === i) {
@@ -382,7 +373,6 @@ export class DatePicker {
       };
       this.dom.day.append(dayDom);
     }
-    // 渲染下月日期
     const nextEndDay = 6 * 7 - curWeek - curDay;
     for (let i = 1; i <= nextEndDay; i++) {
       const dayDom = document.createElement('div');
@@ -405,7 +395,6 @@ export class DatePicker {
       this.dom.dateWrap.classList.remove('active');
       this.dom.timeWrap.classList.add('active');
       this.dom.menu.time.innerText = this.lang.return;
-      // 设置时分秒选择
       this._setTimePick();
     }
   }
@@ -428,7 +417,6 @@ export class DatePicker {
       second: secondDom,
     } = this.dom.time;
     const timeDomList = [hourDom, minuteDom, secondDom];
-    // 清空
     timeDomList.forEach(timeDom => {
       timeDom
         .querySelectorAll('li')

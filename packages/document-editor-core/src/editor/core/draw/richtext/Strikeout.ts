@@ -16,7 +16,7 @@ export class Strikeout extends AbstractRichText {
     const { x, y, width } = this.fillRect;
     ctx.save();
     ctx.strokeStyle = strikeoutColor;
-    const adjustY = y + 0.5; // 从1处渲染，避免线宽度等于3
+    const adjustY = y + 0.5; // 1，3
     ctx.beginPath();
     ctx.moveTo(x, adjustY);
     ctx.lineTo(x + width, adjustY);

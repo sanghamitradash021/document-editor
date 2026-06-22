@@ -108,10 +108,8 @@ export class Search {
     const height = this.draw.getHeight();
     const pageGap = this.draw.getPageGap();
     const preY = pageNo * (height + pageGap);
-    // 创建定位锚点
     const anchor = document.createElement('div');
     anchor.style.position = 'absolute';
-    // 扩大搜索词尺寸，使可视范围更广
     const ANCHOR_OVERFLOW_SIZE = 50;
     anchor.style.width = `${rightTop[0] - leftTop[0] + ANCHOR_OVERFLOW_SIZE}px`;
     anchor.style.height = `${
@@ -120,7 +118,6 @@ export class Search {
     anchor.style.left = `${leftTop[0]}px`;
     anchor.style.top = `${leftTop[1] + preY}px`;
     this.draw.getContainer().append(anchor);
-    // 移动到可视范围
     anchor.scrollIntoView(false);
     anchor.remove();
   }
@@ -159,7 +156,6 @@ export class Search {
   public compute(payload: string) {
     const keyword = payload.toLocaleLowerCase();
     const searchMatchList: ISearchResult[] = [];
-    // 分组
     const elementListGroup: {
       type: EditorContext;
       elementList: IElement[];
@@ -167,7 +163,6 @@ export class Search {
     }[] = [];
     const originalElementList = this.draw.getOriginalElementList();
     const originalElementListLength = originalElementList.length;
-    // 查找表格所在位置
     const tableIndexList = [];
     for (let e = 0; e < originalElementListLength; e++) {
       const element = originalElementList[e];
@@ -200,7 +195,6 @@ export class Search {
       elementIndex = endIndex + 1;
       i++;
     }
-    // 搜索文本
     function searchClosure(
       payload: string | null,
       type: EditorContext,
@@ -296,11 +290,9 @@ export class Search {
         pageNo,
       } = position;
       if (pageNo !== pageIndex) continue;
-      // 高亮并定位当前搜索词
       const searchMatchIndexList = this.getSearchNavigateIndexList();
       if (searchMatchIndexList.includes(s)) {
         ctx.fillStyle = searchNavigateMatchColor;
-        // 是否是第一个字符，则移动到可视范围
         const preSearchMatch = this.searchMatchList[s - 1];
         if (!preSearchMatch || preSearchMatch.groupId !== searchMatch.groupId) {
           this.searchNavigateScrollIntoView(position);

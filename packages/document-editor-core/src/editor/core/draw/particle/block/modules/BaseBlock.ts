@@ -47,11 +47,9 @@ export class BaseBlock {
     const height = this.draw.getHeight();
     const pageGap = this.draw.getPageGap();
     const preY = pageNo * (height + pageGap);
-    // 尺寸
     const { metrics } = this.element;
     this.blockItem.style.width = `${metrics.width}px`;
     this.blockItem.style.height = `${metrics.height}px`;
-    // 位置
     this.blockItem.style.left = `${x}px`;
     this.blockItem.style.top = `${preY + y}px`;
   }

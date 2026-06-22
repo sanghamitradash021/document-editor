@@ -50,7 +50,6 @@ export function mousedown(evt: MouseEvent, host: CanvasEvent) {
     tdValueIndex,
     hitLineStartIndex,
   } = positionResult;
-  // 记录选区开始位置
   host.mouseDownStartPosition = {
     ...positionResult,
     index: isTable ? tdValueIndex! : index,
@@ -59,13 +58,11 @@ export function mousedown(evt: MouseEvent, host: CanvasEvent) {
   const positionList = position.getPositionList();
   const curIndex = isTable ? tdValueIndex! : index;
   const curElement = elementList[curIndex];
-  // 绘制
   const isDirectHitImage = !!(isDirectHit && isImage);
   const isDirectHitCheckbox = !!(isDirectHit && isCheckbox);
   if (~index) {
     rangeManager.setRange(curIndex, curIndex);
     position.setCursorPosition(positionList[curIndex]);
-    // 复选框
     const isSetCheckbox = isDirectHitCheckbox && !isReadonly;
     if (isSetCheckbox) {
       const { checkbox } = curElement;
@@ -88,14 +85,12 @@ export function mousedown(evt: MouseEvent, host: CanvasEvent) {
       isSetCursor: !isDirectHitImage && !isDirectHitCheckbox,
       isCompute: false,
     });
-    // 首字需定位到行首，非上一行最后一个字后
     if (hitLineStartIndex) {
       host.getDraw().getCursor().drawCursor({
         hitLineStartIndex,
       });
     }
   }
-  // 预览工具组件
   const previewer = draw.getPreviewer();
   previewer.clearResizer();
   if (isDirectHitImage && !isReadonly) {
@@ -109,18 +104,15 @@ export function mousedown(evt: MouseEvent, host: CanvasEvent) {
           }
         : {}
     );
-    // 光标事件代理丢失，重新定位
     draw.getCursor().drawCursor({
       isShow: false,
     });
   }
-  // 表格工具组件
   const tableTool = draw.getTableTool();
   tableTool.dispose();
   if (isTable && !isReadonly) {
     tableTool.render();
   }
-  // 超链接
   const hyperlinkParticle = draw.getHyperlinkParticle();
   hyperlinkParticle.clearHyperlinkPopup();
   if (curElement.type === ElementType.HYPERLINK) {
@@ -130,7 +122,6 @@ export function mousedown(evt: MouseEvent, host: CanvasEvent) {
       hyperlinkParticle.drawHyperlinkPopup(curElement, positionList[curIndex]);
     }
   }
-  // 日期控件
   const dateParticle = draw.getDateParticle();
   dateParticle.clearDatePicker();
   if (curElement.type === ElementType.DATE && !isReadonly) {

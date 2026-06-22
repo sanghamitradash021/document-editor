@@ -1,6 +1,6 @@
 import Editor from '../../../src/editor';
 
-describe('菜单-文本处理', () => {
+describe('-', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/canvas-editor/');
 
@@ -10,7 +10,7 @@ describe('菜单-文本处理', () => {
   const text = 'canvas-editor';
   const textLength = text.length;
 
-  it('字体', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -33,12 +33,12 @@ describe('菜单-文本处理', () => {
         .then(() => {
           const data = editor.command.getValue().data.main;
 
-          expect(data[0].font).to.eq('宋体');
+          expect(data[0].font).to.eq('');
         });
     });
   });
 
-  it('字号设置', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -66,7 +66,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('字体增大', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -90,7 +90,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('字体减小', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -114,7 +114,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('加粗', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -138,7 +138,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('斜体', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -162,7 +162,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('下划线', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -186,7 +186,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('删除线', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -210,7 +210,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('上标', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -234,7 +234,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('下标', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -258,7 +258,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('字体颜色', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -280,7 +280,7 @@ describe('菜单-文本处理', () => {
     });
   });
 
-  it('高亮', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 

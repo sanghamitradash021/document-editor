@@ -60,7 +60,6 @@ export class ContextMenu {
   private _addEvent() {
     // menu permissions
     this.container.addEventListener('contextmenu', this._proxyContextMenuEvent);
-    // 副作用处理
     document.addEventListener('mousedown', this._handleSideEffect);
   }
 
@@ -112,7 +111,6 @@ export class ContextMenu {
 
   private _handleSideEffect = (evt: MouseEvent) => {
     if (this.contextMenuContainerList.length) {
-      // 点击非右键菜单内
       const target = <Element>(evt?.composedPath()[0] || evt.target);
       const contextMenuDom = findParent(
         target,
@@ -202,7 +200,6 @@ export class ContextMenu {
           menuItem.onmouseenter = () => {
             this._setHoverStatus(menuItem, true);
             this._removeSubMenu(contextMenuContainer);
-            // 子菜单
             const subMenuRect = menuItem.getBoundingClientRect();
             const left = subMenuRect.left + subMenuRect.width;
             const top = subMenuRect.top;
@@ -237,20 +234,17 @@ export class ContextMenu {
             this.dispose();
           };
         }
-        // 图标
         const icon = document.createElement('i');
         menuItem.append(icon);
         if (menu.icon) {
           icon.classList.add(`${EDITOR_PREFIX}-contextmenu-${menu.icon}`);
         }
-        // 文本
         const span = document.createElement('span');
         const name = menu.i18nPath
           ? this._formatName(this.i18n.t(menu.i18nPath))
           : this._formatName(menu.name || '');
         span.append(document.createTextNode(name));
         menuItem.append(span);
-        // 快捷方式提示
         if (menu.shortCut) {
           const span = document.createElement('span');
           span.classList.add(`${EDITOR_PREFIX}-shortcut`);
@@ -264,7 +258,6 @@ export class ContextMenu {
     contextMenuContainer.style.display = 'block';
     const innerWidth = window.innerWidth;
     const contextMenuWidth = contextMenuContainer.getBoundingClientRect().width;
-    // 右侧空间不足时，以菜单右上角作为起始点
     const adjustLeft =
       left + contextMenuWidth > innerWidth ? left - contextMenuWidth : left;
     contextMenuContainer.style.left = `${adjustLeft}px`;
@@ -298,7 +291,6 @@ export class ContextMenu {
     const placeholderReg = new RegExp(`${placeholderValues.join('|')}`);
     let formatName = name;
     if (placeholderReg.test(formatName)) {
-      // 选区名称
       const selectedReg = new RegExp(NAME_PLACEHOLDER.SELECTED_TEXT, 'g');
       if (selectedReg.test(formatName)) {
         const selectedText = this.range.toString();

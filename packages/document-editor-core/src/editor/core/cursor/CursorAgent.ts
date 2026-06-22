@@ -20,14 +20,12 @@ export class CursorAgent {
     this.draw = draw;
     this.container = draw.getContainer();
     this.canvasEvent = canvasEvent;
-    // 代理光标绘制
     const agentCursorDom = document.createElement('textarea');
     agentCursorDom.autocomplete = 'off';
     agentCursorDom.classList.add(`${EDITOR_PREFIX}-inputarea`);
     agentCursorDom.innerText = '';
     this.container.append(agentCursorDom);
     this.agentCursorDom = agentCursorDom;
-    // 事件
     agentCursorDom.onkeydown = (evt: KeyboardEvent) => this._keyDown(evt);
     agentCursorDom.oninput = (evt: Event) => this._input(evt as InputEvent);
     agentCursorDom.onpaste = (evt: ClipboardEvent) => this._paste(evt);
@@ -60,7 +58,6 @@ export class CursorAgent {
     const rangeManager = this.draw.getRange();
     const { startIndex } = rangeManager.getRange();
     const elementList = this.draw.getElementList();
-    // 从粘贴板提取数据
     let isHTML = false;
     for (let i = 0; i < clipboardData.items.length; i++) {
       const item = clipboardData.items[i];
@@ -82,9 +79,7 @@ export class CursorAgent {
             const pasteElementList = getElementListByHTML(htmlText, {
               innerWidth: this.draw.getOriginalInnerWidth(),
             });
-            // 全选粘贴无需格式化上下文
             if (~startIndex && !rangeManager.getIsSelectAll()) {
-              // 如果是复制到虚拟元素里，则粘贴列表的虚拟元素需扁平化处理，避免产生新的虚拟元素
               const anchorElement = elementList[startIndex];
               if (anchorElement?.titleId || anchorElement?.listId) {
                 let start = 0;
@@ -124,7 +119,6 @@ export class CursorAgent {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file);
             fileReader.onload = () => {
-              // 计算宽高
               const image = new Image();
               const value = fileReader.result as string;
               image.src = value;

@@ -18,11 +18,9 @@ export const imageMenus: IRegisterContextMenu[] = [
       );
     },
     callback: (command: Command) => {
-      // 创建代理元素
       const proxyInputFile = document.createElement('input');
       proxyInputFile.type = 'file';
       proxyInputFile.accept = '.png, .jpg, .jpeg';
-      // 监听上传
       proxyInputFile.onchange = () => {
         const file = proxyInputFile.files![0]!;
         const fileReader = new FileReader();

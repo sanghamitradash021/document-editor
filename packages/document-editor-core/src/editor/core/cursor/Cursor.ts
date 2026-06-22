@@ -102,10 +102,8 @@ export class Cursor {
       isFocus = true,
       hitLineStartIndex,
     } = { ...cursor, ...payload };
-    // 设置光标代理
     const height = this.draw.getHeight();
     const pageGap = this.draw.getPageGap();
-    // 光标位置
     if (hitLineStartIndex) {
       const positionList = this.position.getPositionList();
       cursorPosition = positionList[hitLineStartIndex];
@@ -121,7 +119,7 @@ export class Cursor {
       ? pageNo
       : this.draw.getPageNo();
     const preY = curPageNo * (height + pageGap);
-    // 增加1/4字体大小
+    // 1/4
     const offsetHeight = metrics.height / 4;
     const cursorHeight = metrics.height + offsetHeight * 2;
     const agentCursorDom = this.cursorAgent.getAgentCursorDom();
@@ -131,7 +129,7 @@ export class Cursor {
         agentCursorDom.setSelectionRange(0, 0);
       });
     }
-    // fillText位置 + 文字基线到底部距离 - 模拟光标偏移量
+    // fillText + -
     const descent =
       metrics.boundingBoxDescent < 0 ? 0 : metrics.boundingBoxDescent;
     const cursorTop =
@@ -141,7 +139,6 @@ export class Cursor {
     agentCursorDom.style.top = `${
       cursorTop + cursorHeight - CURSOR_AGENT_HEIGHT * scale
     }px`;
-    // 模拟光标显示
     if (!isShow) return;
     const isReadonly = this.draw.isReadonly();
     this.cursorDom.style.width = `${width}px`;
@@ -169,15 +166,13 @@ export class Cursor {
       pageNo,
       coordinate: { leftTop, leftBottom },
     } = cursorPosition;
-    // 当前页面距离滚动容器顶部距离
     const prePageY =
       pageNo * (this.draw.getHeight() + this.draw.getPageGap()) +
       this.container.getBoundingClientRect().top;
-    // 向上移动时：以顶部距离为准，向下移动时：以底部位置为准
     const isUp = direction === MoveDirection.UP;
     const x = leftBottom[0];
     const y = isUp ? leftTop[1] + prePageY : leftBottom[1] + prePageY;
-    // 查找滚动容器，如果是滚动容器是document，则限制范围为当前窗口
+    // ，document，
     const scrollContainer = findScrollContainer(this.container);
     const rect = {
       left: 0,
@@ -196,11 +191,9 @@ export class Cursor {
       rect.top = top;
       rect.bottom = bottom;
     }
-    // 可视范围根据参数调整
     const { maskMargin } = this.options;
     rect.top += maskMargin[0];
     rect.bottom -= maskMargin[2];
-    // 不在可视范围时，移动滚动条到合适位置
     if (
       !(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)
     ) {

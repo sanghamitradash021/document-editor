@@ -1,17 +1,17 @@
 import Editor, { ControlType, ElementType } from '../../../src/editor';
 
-describe('控件-列举型', () => {
+describe('-', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/canvas-editor/');
 
     cy.get('canvas').first().as('canvas').should('have.length', 1);
   });
 
-  const text = `有`;
+  const text = ``;
   const elementType: ElementType = <ElementType>'control';
   const controlType: ControlType = <ControlType>'select';
 
-  it('列举型', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -24,14 +24,14 @@ describe('控件-列举型', () => {
           control: {
             type: controlType,
             value: null,
-            placeholder: '列举型',
+            placeholder: '',
             valueSets: [
               {
-                value: '有',
+                value: '',
                 code: '98175',
               },
               {
-                value: '无',
+                value: '',
                 code: '98176',
               },
             ],

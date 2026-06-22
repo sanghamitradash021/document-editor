@@ -13,7 +13,7 @@ export class SeparatorParticle {
     if (element.dashArray && element.dashArray.length) {
       ctx.setLineDash(element.dashArray);
     }
-    ctx.translate(0, 0.5); // 从1处渲染，避免线宽度等于3
+    ctx.translate(0, 0.5); // 1，3
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.lineTo(x + element.width!, y);

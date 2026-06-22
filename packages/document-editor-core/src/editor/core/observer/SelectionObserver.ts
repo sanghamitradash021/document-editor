@@ -3,9 +3,7 @@ import { Draw } from '../draw/Draw';
 import { RangeManager } from '../range/RangeManager';
 
 export class SelectionObserver {
-  // 每次滚动长度
   private readonly step: number = 5;
-  // 触发滚动阀值
   private readonly thresholdPoints: [
     top: number,
     down: number,

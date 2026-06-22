@@ -112,7 +112,6 @@ export class CanvasEvent {
       });
     });
     this.draw.render({ isSetCursor: false });
-    // 清除格式刷
     const painterOptions = this.draw.getPainterOptions();
     if (!painterOptions || !painterOptions.isDblclick) {
       this.clearPainterStyle();

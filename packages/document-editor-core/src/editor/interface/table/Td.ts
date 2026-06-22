@@ -20,9 +20,9 @@ export interface ITd {
   positionList?: IElementPosition[];
   verticalAlign?: VerticalAlign;
   backgroundColor?: string;
-  mainHeight?: number; // 内容 + 内边距高度
-  realHeight?: number; // 真实高度（包含跨列）
-  realMinHeight?: number; // 真实最小高度（包含跨列）
+  mainHeight?: number; // +
+  realHeight?: number; // （）
+  realMinHeight?: number; // （）
   borderBgTop?: string;
   borderBgBottom?: string;
   borderBgRight?: string;

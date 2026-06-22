@@ -38,7 +38,6 @@ export class SelectControl implements IControlInstance {
     const { startIndex } = this.control.getRange();
     const startElement = elementList[startIndex];
     const data: IElement[] = [];
-    // 向左查找
     let preIndex = startIndex;
     while (preIndex > 0) {
       const preElement = elementList[preIndex];
@@ -53,7 +52,6 @@ export class SelectControl implements IControlInstance {
       }
       preIndex--;
     }
-    // 向右查找
     let nextIndex = startIndex + 1;
     while (nextIndex < elementList.length) {
       const nextElement = elementList[nextIndex];
@@ -80,14 +78,13 @@ export class SelectControl implements IControlInstance {
 
     const elementList = this.control.getElementList();
     const range = this.control.getRange();
-    // 收缩边界到Value内
+    // Value
     this.control.shrinkBoundary();
     const { startIndex, endIndex } = range;
     const startElement = elementList[startIndex];
     const endElement = elementList[endIndex];
     // backspace
     if (evt.key === KeyMap.Backspace) {
-      // 清空选项
       if (startIndex !== endIndex) {
         return this.clearSelect();
       } else {
@@ -96,17 +93,13 @@ export class SelectControl implements IControlInstance {
           endElement.controlComponent === ControlComponent.POSTFIX ||
           startElement.controlComponent === ControlComponent.PLACEHOLDER
         ) {
-          // 前缀、后缀、占位符
           return this.control.removeControl(startIndex);
         } else {
-          // 清空选项
           return this.clearSelect();
         }
       }
     } else if (evt.key === KeyMap.Delete) {
-      // 移除选区元素
       if (startIndex !== endIndex) {
-        // 清空选项
         return this.clearSelect();
       } else {
         const endNextElement = elementList[endIndex + 1];
@@ -116,10 +109,8 @@ export class SelectControl implements IControlInstance {
           endNextElement.controlComponent === ControlComponent.POSTFIX ||
           startElement.controlComponent === ControlComponent.PLACEHOLDER
         ) {
-          // 前缀、后缀、占位符
           return this.control.removeControl(startIndex);
         } else {
-          // 清空选项
           return this.clearSelect();
         }
       }
@@ -133,7 +124,6 @@ export class SelectControl implements IControlInstance {
     if (startIndex === endIndex) {
       return startIndex;
     }
-    // 清空选项
     return this.clearSelect();
   }
 
@@ -143,7 +133,6 @@ export class SelectControl implements IControlInstance {
     const startElement = elementList[startIndex];
     let leftIndex = -1;
     let rightIndex = -1;
-    // 向左查找
     let preIndex = startIndex;
     while (preIndex > 0) {
       const preElement = elementList[preIndex];
@@ -156,7 +145,6 @@ export class SelectControl implements IControlInstance {
       }
       preIndex--;
     }
-    // 向右查找
     let nextIndex = startIndex + 1;
     while (nextIndex < elementList.length) {
       const nextElement = elementList[nextIndex];
@@ -170,10 +158,8 @@ export class SelectControl implements IControlInstance {
       nextIndex++;
     }
     if (!~leftIndex || !~rightIndex) return -1;
-    // 删除元素
     const draw = this.control.getDraw();
     draw.spliceElementList(elementList, leftIndex + 1, rightIndex - leftIndex);
-    // 增加占位符
     this.control.addPlaceholder(preIndex);
     this.element.control!.code = null;
     return preIndex;
@@ -183,13 +169,11 @@ export class SelectControl implements IControlInstance {
     const control = this.element.control!;
     const valueSets = control.valueSets;
     if (!Array.isArray(valueSets) || !valueSets.length) return;
-    // 转换code
+    // code
     const valueSet = valueSets.find(v => v.code === code);
     if (!valueSet) return;
-    // 清空选项
     const startIndex = this.clearSelect();
     this.control.removePlaceholder(startIndex);
-    // 插入
     const elementList = this.control.getElementList();
     const startElement = elementList[startIndex];
     const anchorElement =
@@ -211,7 +195,6 @@ export class SelectControl implements IControlInstance {
     // render
     const newIndex = start + data.length - 1;
     this.control.repaintControl(newIndex);
-    // 设置状态
     this.element.control!.code = code;
     this.destroy();
   }
@@ -222,7 +205,7 @@ export class SelectControl implements IControlInstance {
     if (!Array.isArray(valueSets) || !valueSets.length) return;
     const position = this.control.getPosition();
     if (!position) return;
-    // dom树：<div><ul><li>item</li></ul></div>
+    // dom：<div><ul><li>item</li></ul></div>
     const selectPopupContainer = document.createElement('div');
     selectPopupContainer.classList.add(`${EDITOR_PREFIX}-select-control-popup`);
     selectPopupContainer.setAttribute(EDITOR_COMPONENT, EditorComponent.POPUP);
@@ -241,7 +224,6 @@ export class SelectControl implements IControlInstance {
       ul.append(li);
     }
     selectPopupContainer.append(ul);
-    // 定位
     const {
       coordinate: {
         leftTop: [left, top],
@@ -251,7 +233,7 @@ export class SelectControl implements IControlInstance {
     const preY = this.control.getPreY();
     selectPopupContainer.style.left = `${left}px`;
     selectPopupContainer.style.top = `${top + preY + lineHeight}px`;
-    // 追加至container
+    // container
     const container = this.control.getContainer();
     container.append(selectPopupContainer);
     this.selectDom = selectPopupContainer;

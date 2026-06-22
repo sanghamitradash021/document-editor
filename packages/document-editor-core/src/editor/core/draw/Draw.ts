@@ -503,7 +503,6 @@ export class Draw {
       editorOptions: this.options,
     });
     let curIndex = -1;
-    // 判断是否在控件内
     const activeControl = this.control.getActiveControl();
     if (activeControl && !this.control.isRangInPostfix()) {
       curIndex = activeControl.setValue(payload);
@@ -710,17 +709,16 @@ export class Draw {
   public setPageMode(payload: PageMode) {
     if (!payload || this.options.pageMode === payload) return;
     this.options.pageMode = payload;
-    // 纸张大小重置
     if (payload === PageMode.PAGING) {
       const { height } = this.options;
       const dpr = this.getPagePixelRatio();
       const canvas = this.pageList[0];
       canvas.style.height = `${height}px`;
       canvas.height = height * dpr;
-      // canvas尺寸发生变化，上下文被重置
+      // canvas，
       this._initPageContext(this.ctxList[0]);
     } else {
-      // 连页模式：移除懒加载监听&清空页眉页脚计算数据
+      // ：&
       this._disconnectLazyRender();
       this.header.recovery();
       this.footer.recovery();
@@ -730,7 +728,6 @@ export class Draw {
       isSubmitHistory: false,
       isSetCursor: false,
     });
-    // 回调
     setTimeout(() => {
       if (this.listener.pageModeChange) {
         this.listener.pageModeChange(payload);
@@ -842,9 +839,7 @@ export class Draw {
   }
 
   public getValue(options: IGetValueOption = {}): IEditorResult {
-    // 配置
     const { width, height, margins, watermark } = this.options;
-    // 数据
     const { pageNo } = options;
     let mainElementList = this.elementList;
     if (
@@ -899,7 +894,7 @@ export class Draw {
       });
       this.footer.setElementList(footer);
     }
-    // 渲染&计算&清空历史记录
+    // &&
     this.historyManager.recovery();
     this.render({
       isSetCursor: false,
@@ -913,7 +908,6 @@ export class Draw {
   }
 
   private _formatContainer() {
-    // 容器宽度需跟随纸张宽度
     this.container.style.position = 'relative';
     this.container.style.width = `${this.getWidth()}px`;
     this.container.setAttribute(EDITOR_COMPONENT, EditorComponent.MAIN);
@@ -937,15 +931,12 @@ export class Draw {
     canvas.style.marginBottom = `${this.getPageGap()}px`;
     canvas.setAttribute('data-index', String(pageNo));
     this.pageContainer.append(canvas);
-    // 调整分辨率
     const dpr = this.getPagePixelRatio();
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     canvas.style.cursor = 'text';
     const ctx = canvas.getContext('2d')!;
-    // 初始化上下文配置
     this._initPageContext(ctx);
-    // 缓存上下文
     this.pageList.push(canvas);
     this.ctxList.push(ctx);
   }
@@ -953,7 +944,7 @@ export class Draw {
   private _initPageContext(ctx: CanvasRenderingContext2D) {
     const dpr = this.getPagePixelRatio();
     ctx.scale(dpr, dpr);
-    // 重置以下属性是因部分浏览器(chrome)会应用css样式
+    // (chrome)css
     ctx.letterSpacing = '0px';
     ctx.wordSpacing = '0px';
     ctx.direction = 'ltr';
@@ -1697,7 +1688,6 @@ export class Draw {
     let pageNo = 0;
     if (pageMode === PageMode.CONTINUITY) {
       pageRowList[0] = this.rowList;
-      // 重置高度
       pageHeight += this.rowList.reduce((pre, cur) => pre + cur.height, 0);
       const dpr = this.getPagePixelRatio();
       const pageDom = this.pageList[0];
@@ -1746,7 +1736,6 @@ export class Draw {
     let index = startIndex;
     for (let i = 0; i < rowList.length; i++) {
       const curRow = rowList[i];
-      // 选区绘制记录
       const rangeRecord: IElementFillRect = {
         x: 0,
         y: 0,
@@ -1757,7 +1746,6 @@ export class Draw {
       for (let j = 0; j < curRow.elementList.length; j++) {
         const element = curRow.elementList[j];
         const metrics = element.metrics;
-        // 当前元素位置信息
         const {
           ascent: offsetY,
           coordinate: {
@@ -1765,9 +1753,7 @@ export class Draw {
           },
         } = positionList[curRow.startIndex + j];
         const preElement = curRow.elementList[j - 1];
-        // 元素高亮记录
         if (element.highlight) {
-          // 高亮元素相连需立即绘制，并记录下一元素坐标
           if (
             preElement &&
             preElement.highlight &&
@@ -1786,7 +1772,6 @@ export class Draw {
         } else if (preElement?.highlight) {
           this.highlight.render(ctx);
         }
-        // 元素绘制
         if (element.type === ElementType.IMAGE) {
           this._drawRichText(ctx);
           this.imageParticle.render(ctx, element, x, y + offsetY);
@@ -1827,7 +1812,7 @@ export class Draw {
         } else if (element.type === ElementType.TAB) {
           this._drawRichText(ctx);
         } else if (element.rowFlex === RowFlex.ALIGNMENT) {
-          // 如果是两端对齐，因canvas目前不支持letterSpacing需单独绘制文本
+          // ，canvasletterSpacing
           this.textParticle.record(ctx, element, x, y + offsetY);
           this._drawRichText(ctx);
         } else if (element.type === ElementType.BLOCK) {
@@ -1836,7 +1821,6 @@ export class Draw {
         } else {
           this.textParticle.record(ctx, element, x, y + offsetY);
         }
-        // 下划线记录
         if (element.underline) {
           const lineSpacing = element.rowMargin || defaultRowMargin;
           const elSizePx =
@@ -1854,7 +1838,6 @@ export class Draw {
         } else if (preElement?.underline) {
           this.underline.render(ctx);
         }
-        // 删除线记录
         if (element.strikeout) {
           this.strikeout.recordFillInfo(
             ctx,
@@ -1865,7 +1848,6 @@ export class Draw {
         } else if (preElement?.strikeout) {
           this.strikeout.render(ctx);
         }
-        // 选区记录
         const {
           zone: currentZone,
           startIndex,
@@ -1877,7 +1859,7 @@ export class Draw {
           startIndex <= index &&
           index <= endIndex
         ) {
-          // 从行尾开始-绘制最小宽度
+          // -
           if (startIndex === index) {
             const nextElement = elementList[startIndex + 1];
             if (nextElement && nextElement.value === ZERO) {
@@ -1888,17 +1870,14 @@ export class Draw {
             }
           } else {
             const positionContext = this.position.getPositionContext();
-            // 表格需限定上下文
             if (
               (!positionContext.isTable && !element.tdId) ||
               positionContext.tdId === element.tdId
             ) {
               let rangeWidth = metrics.width;
-              // 最小选区宽度
               if (rangeWidth === 0 && curRow.elementList.length === 1) {
                 rangeWidth = this.options.rangeMinWidth;
               }
-              // 记录第一次位置、行高
               if (!rangeRecord.width) {
                 rangeRecord.x = x;
                 rangeRecord.y = y;
@@ -1909,7 +1888,6 @@ export class Draw {
           }
         }
         index++;
-        // 绘制表格内元素
         if (element.type === ElementType.TABLE) {
           const tdGap = tdPadding * 2;
           for (let t = 0; t < element.trList!.length; t++) {
@@ -1929,7 +1907,6 @@ export class Draw {
           }
         }
       }
-      // 绘制列表样式
       if (curRow.isList) {
         this.listParticle.drawListStyle(
           ctx,
@@ -1937,9 +1914,7 @@ export class Draw {
           positionList[curRow.startIndex]
         );
       }
-      // 绘制富文本及文字
       this._drawRichText(ctx);
-      // 绘制选区
       if (rangeRecord.width && rangeRecord.height) {
         const { x, y, width, height } = rangeRecord;
         this.range.render(ctx, x, y, width, height);
@@ -1972,14 +1947,11 @@ export class Draw {
       this.options;
     const innerWidth = this.getInnerWidth();
     const ctx = this.ctxList[pageNo];
-    // 判断当前激活区域-非正文区域时元素透明度降低
+    // -
     ctx.globalAlpha = !this.zone.isMainActive() ? inactiveAlpha : 1;
     this._clearPage(pageNo);
-    // 绘制背景
     this.background.render(ctx);
-    // 绘制页边距
     this.margin.render(ctx, pageNo);
-    // 渲染元素
     const index = rowList[0].startIndex;
     this.drawRow(ctx, {
       elementList,
@@ -1991,28 +1963,22 @@ export class Draw {
       zone: EditorZone.MAIN,
     });
     if (this.getIsPagingMode()) {
-      // 绘制页眉
       if (!header.disabled) {
         this.header.render(ctx, pageNo);
       }
-      // 绘制页码
       if (!pageNumber.disabled) {
         this.pageNumber.render(ctx, pageNo);
       }
-      // 绘制页脚
       if (!footer.disabled) {
         this.footer.render(ctx, pageNo);
       }
     }
-    // 搜索匹配绘制
     if (this.search.getSearchKeyword()) {
       this.search.render(ctx, pageNo);
     }
-    // 绘制水印
     if (pageMode !== PageMode.CONTINUITY && this.options.watermark.data) {
       this.waterMark.render(ctx);
     }
-    // 绘制空白占位符
     if (this.elementList.length <= 1) {
       this.placeholder.render(ctx);
     }

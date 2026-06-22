@@ -128,7 +128,6 @@ export class CommandAdapt {
     const elementList = this.draw.getElementList();
     const { startIndex, endIndex } = this.range.getRange();
     const isCollapsed = startIndex === endIndex;
-    // 首字符禁止删除
     if (
       isCollapsed &&
       elementList[startIndex].value === ZERO &&
@@ -371,14 +370,12 @@ export class CommandAdapt {
       s => s.type === ElementType.SUPERSCRIPT
     );
     selection.forEach(el => {
-      // 取消上标
       if (~superscriptIndex) {
         if (el.type === ElementType.SUPERSCRIPT) {
           el.type = ElementType.TEXT;
           delete el.actualSize;
         }
       } else {
-        // 设置上标
         if (
           !el.type ||
           el.type === ElementType.TEXT ||
@@ -402,14 +399,12 @@ export class CommandAdapt {
       s => s.type === ElementType.SUBSCRIPT
     );
     selection.forEach(el => {
-      // 取消下标
       if (~subscriptIndex) {
         if (el.type === ElementType.SUBSCRIPT) {
           el.type = ElementType.TEXT;
           delete el.actualSize;
         }
       } else {
-        // 设置下标
         if (
           !el.type ||
           el.type === ElementType.TEXT ||
@@ -502,14 +497,11 @@ export class CommandAdapt {
     if (isReadonly) return;
     const { startIndex, endIndex } = this.range.getRange();
     if (!~startIndex && !~endIndex) return;
-    // 需要改变的元素列表
     const changeElementList = this.range.getRangeElementList();
     if (!changeElementList || !changeElementList.length) return;
-    // 如果包含列表则设置为取消列表
     const isUnsetList = changeElementList.find(
       el => el.listType === listType && el.listStyle === listStyle
     );
-    // 设置值
     const listId = getUUID();
     changeElementList.forEach(el => {
       if (!isUnsetList && listType) {
@@ -524,7 +516,6 @@ export class CommandAdapt {
         }
       }
     });
-    // 光标定位
     const isSetCursor = startIndex === endIndex;
     const curIndex = isSetCursor ? endIndex : startIndex;
     this.draw.render({ curIndex, isSetCursor });
@@ -535,12 +526,10 @@ export class CommandAdapt {
     if (isReadonly) return;
     const { startIndex, endIndex } = this.range.getRange();
     if (!~startIndex && !~endIndex) return;
-    // 选区行信息
     const rangeRow = this.range.getRangeRow();
     if (!rangeRow) return;
     const positionList = this.position.getPositionList();
     const elementList = this.draw.getElementList();
-    // 当前选区所在行
     for (let p = 0; p < positionList.length; p++) {
       const position = positionList[p];
       const rowSet = rangeRow.get(position.pageNo);
@@ -549,7 +538,6 @@ export class CommandAdapt {
         elementList[p].rowFlex = payload;
       }
     }
-    // 光标定位
     const isSetCursor = startIndex === endIndex;
     const curIndex = isSetCursor ? endIndex : startIndex;
     this.draw.render({ curIndex, isSetCursor });
@@ -560,12 +548,10 @@ export class CommandAdapt {
     if (isReadonly) return;
     const { startIndex, endIndex } = this.range.getRange();
     if (!~startIndex && !~endIndex) return;
-    // 选区行信息
     const rangeRow = this.range.getRangeRow();
     if (!rangeRow) return;
     const positionList = this.position.getPositionList();
     const elementList = this.draw.getElementList();
-    // 当前选区所在行
     for (let p = 0; p < positionList.length; p++) {
       const position = positionList[p];
       const rowSet = rangeRow.get(position.pageNo);
@@ -574,7 +560,6 @@ export class CommandAdapt {
         elementList[p].rowMargin = payload;
       }
     }
-    // 光标定位
     const isSetCursor = startIndex === endIndex;
     const curIndex = isSetCursor ? endIndex : startIndex;
     this.draw.render({ curIndex, isSetCursor });
@@ -663,7 +648,7 @@ export class CommandAdapt {
       colgroup,
       trList,
     };
-    // 格式化element
+    // element
     formatElementList([element], {
       editorOptions: this.options,
     });
@@ -689,7 +674,6 @@ export class CommandAdapt {
     const element = originalElementList[index!];
     const curTrList = element.trList!;
     const curTr = curTrList[trIndex!];
-    // 之前跨行的增加跨行数
     if (curTr.tdList.length < element.colgroup!.length) {
       const curTrNo = curTr.tdList[0].rowIndex!;
       for (let t = 0; t < trIndex!; t++) {
@@ -702,7 +686,6 @@ export class CommandAdapt {
         }
       }
     }
-    // 增加当前行
     const newTrId = getUUID();
     const newTr: ITr = {
       height: curTr.height,
@@ -728,7 +711,6 @@ export class CommandAdapt {
       });
     }
     curTrList.splice(trIndex!, 0, newTr);
-    // 重新设置上下文
     this.position.setPositionContext({
       isTable: true,
       index,
@@ -739,7 +721,6 @@ export class CommandAdapt {
       tableId,
     });
     this.range.setRange(0, 0);
-    // 重新渲染
     this.draw.render({ curIndex: 0 });
     this.tableTool.render();
   }
@@ -756,7 +737,7 @@ export class CommandAdapt {
     const curTr = curTrList[trIndex!];
     const anchorTr =
       curTrList.length - 1 === trIndex ? curTr : curTrList[trIndex! + 1];
-    // 之前/当前行跨行的增加跨行数
+    // /
     if (anchorTr.tdList.length < element.colgroup!.length) {
       const curTrNo = anchorTr.tdList[0].rowIndex!;
       for (let t = 0; t < trIndex! + 1; t++) {
@@ -769,7 +750,6 @@ export class CommandAdapt {
         }
       }
     }
-    // 增加当前行
     const newTrId = getUUID();
     const newTr: ITr = {
       height: anchorTr.height,
@@ -795,7 +775,6 @@ export class CommandAdapt {
       });
     }
     curTrList.splice(trIndex! + 1, 0, newTr);
-    // 重新设置上下文
     this.position.setPositionContext({
       isTable: true,
       index,
@@ -806,7 +785,6 @@ export class CommandAdapt {
       tableId,
     });
     this.range.setRange(0, 0);
-    // 重新渲染
     this.draw.render({ curIndex: 0 });
     this.tableTool.render();
   }
@@ -821,7 +799,6 @@ export class CommandAdapt {
     const element = originalElementList[index!];
     const curTrList = element.trList!;
     const curTdIndex = tdIndex!;
-    // 增加列
     for (let t = 0; t < curTrList.length; t++) {
       const tr = curTrList[t];
       const tdId = getUUID();
@@ -840,7 +817,6 @@ export class CommandAdapt {
         ],
       });
     }
-    // 重新计算宽度
     const colgroup = element.colgroup!;
     colgroup.splice(curTdIndex, 0, {
       width: this.options.defaultColMinWidth,
@@ -854,7 +830,6 @@ export class CommandAdapt {
         group.width -= adjustWidth;
       }
     }
-    // 重新设置上下文
     this.position.setPositionContext({
       isTable: true,
       index,
@@ -865,7 +840,6 @@ export class CommandAdapt {
       tableId,
     });
     this.range.setRange(0, 0);
-    // 重新渲染
     this.draw.render({ curIndex: 0 });
     this.tableTool.render();
   }
@@ -880,7 +854,6 @@ export class CommandAdapt {
     const element = originalElementList[index!];
     const curTrList = element.trList!;
     const curTdIndex = tdIndex! + 1;
-    // 增加列
     for (let t = 0; t < curTrList.length; t++) {
       const tr = curTrList[t];
       const tdId = getUUID();
@@ -899,7 +872,6 @@ export class CommandAdapt {
         ],
       });
     }
-    // 重新计算宽度
     const colgroup = element.colgroup!;
     colgroup.splice(curTdIndex, 0, {
       width: this.options.defaultColMinWidth,
@@ -913,7 +885,6 @@ export class CommandAdapt {
         group.width -= adjustWidth;
       }
     }
-    // 重新设置上下文
     this.position.setPositionContext({
       isTable: true,
       index,
@@ -924,7 +895,6 @@ export class CommandAdapt {
       tableId,
     });
     this.range.setRange(0, 0);
-    // 重新渲染
     this.draw.render({ curIndex: 0 });
     this.tableTool.render();
   }
@@ -939,12 +909,10 @@ export class CommandAdapt {
     const element = originalElementList[index!];
     const curTrList = element.trList!;
     const curTr = curTrList[trIndex!];
-    // 如果是最后一行，直接删除整个表格
     if (curTrList.length <= 1) {
       this.deleteTable();
       return;
     }
-    // 补跨行
     for (let d = 0; d < curTr.tdList.length; d++) {
       const td = curTr.tdList[d];
       if (td.rowspan > 1) {
@@ -970,14 +938,11 @@ export class CommandAdapt {
         }
       }
     }
-    // 删除当前行
     curTrList.splice(trIndex!, 1);
-    // 重新设置上下文
     this.position.setPositionContext({
       isTable: false,
     });
     this.range.setRange(0, 0);
-    // 重新渲染
     this.draw.render({
       curIndex: positionContext.index,
     });
@@ -995,20 +960,17 @@ export class CommandAdapt {
     const curTrList = element.trList!;
     const curTd = curTrList[trIndex!].tdList[tdIndex!];
     const curColIndex = curTd.colIndex!;
-    // 如果是最后一列，直接删除整个表格
     const moreTdTr = curTrList.find(tr => tr.tdList.length > 1);
     if (!moreTdTr) {
       this.deleteTable();
       return;
     }
-    // 跨列处理
     for (let t = 0; t < curTrList.length; t++) {
       const tr = curTrList[t];
       for (let d = 0; d < tr.tdList.length; d++) {
         const td = tr.tdList[d];
         if (td.colspan > 1) {
           const tdColIndex = td.colIndex!;
-          // 交叉减去一列
           if (
             tdColIndex <= curColIndex &&
             tdColIndex + td.colspan - 1 >= curColIndex
@@ -1018,7 +980,6 @@ export class CommandAdapt {
         }
       }
     }
-    // 删除当前列
     for (let t = 0; t < curTrList.length; t++) {
       const tr = curTrList[t];
       let start = -1;
@@ -1033,12 +994,10 @@ export class CommandAdapt {
       }
     }
     element.colgroup?.splice(curColIndex, 1);
-    // 重新设置上下文
     this.position.setPositionContext({
       isTable: false,
     });
     this.range.setRange(0, 0);
-    // 重新渲染
     this.draw.render({
       curIndex: positionContext.index,
     });
@@ -1081,7 +1040,6 @@ export class CommandAdapt {
     const curTrList = element.trList!;
     let startTd = curTrList[startTrIndex!].tdList[startTdIndex!];
     let endTd = curTrList[endTrIndex!].tdList[endTdIndex!];
-    // 交换起始位置
     if (startTd.x! > endTd.x! || startTd.y! > endTd.y!) {
       // prettier-ignore
       [startTd, endTd] = [endTd, startTd]
@@ -1090,7 +1048,6 @@ export class CommandAdapt {
     const endColIndex = endTd.colIndex! + (endTd.colspan - 1);
     const startRowIndex = startTd.rowIndex!;
     const endRowIndex = endTd.rowIndex! + (endTd.rowspan - 1);
-    // 选区行列
     const rowCol: ITd[][] = [];
     for (let t = 0; t < curTrList.length; t++) {
       const tr = curTrList[t];
@@ -1113,7 +1070,6 @@ export class CommandAdapt {
       }
     }
     if (!rowCol.length) return;
-    // 是否是矩形
     const lastRow = rowCol[rowCol.length - 1];
     const leftTop = rowCol[0][0];
     const rightBottom = lastRow[lastRow.length - 1];
@@ -1129,7 +1085,6 @@ export class CommandAdapt {
         const tdStartY = td.y!;
         const tdEndX = tdStartX + td.width!;
         const tdEndY = tdStartY + td.height!;
-        // 存在不符合项
         if (
           startX > tdStartX ||
           startY > tdStartY ||
@@ -1140,7 +1095,6 @@ export class CommandAdapt {
         }
       }
     }
-    // 合并单元格
     const mergeTdIdList: string[] = [];
     const anchorTd = rowCol[0][0];
     for (let t = 0; t < rowCol.length; t++) {
@@ -1148,15 +1102,13 @@ export class CommandAdapt {
       for (let d = 0; d < tr.length; d++) {
         const td = tr[d];
         const isAnchorTd = t === 0 && d === 0;
-        // 待删除单元id
+        // id
         if (!isAnchorTd) {
           mergeTdIdList.push(td.id!);
         }
-        // 列合并
         if (t === 0 && d !== 0) {
           anchorTd.colspan += td.colspan;
         }
-        // 行合并
         if (t !== 0) {
           if (anchorTd.colIndex === td.colIndex) {
             anchorTd.rowspan += td.rowspan;
@@ -1164,7 +1116,6 @@ export class CommandAdapt {
         }
       }
     }
-    // 移除多余单元格
     for (let t = 0; t < curTrList.length; t++) {
       const tr = curTrList[t];
       let d = 0;
@@ -1177,7 +1128,6 @@ export class CommandAdapt {
         d++;
       }
     }
-    // 重新渲染
     const curIndex = startTd.value.length - 1;
     this.range.setRange(curIndex, curIndex);
     this.draw.render();
@@ -1197,7 +1147,6 @@ export class CommandAdapt {
     const curTd = curTr.tdList[tdIndex!];
     if (curTd.rowspan === 1 && curTd.colspan === 1) return;
     const colspan = curTd.colspan;
-    // 设置跨列
     if (curTd.colspan > 1) {
       for (let c = 1; c < curTd.colspan; c++) {
         const tdId = getUUID();
@@ -1218,7 +1167,6 @@ export class CommandAdapt {
       }
       curTd.colspan = 1;
     }
-    // 设置跨行
     if (curTd.rowspan > 1) {
       for (let r = 1; r < curTd.rowspan; r++) {
         const tr = curTrList[trIndex! + r];
@@ -1242,7 +1190,6 @@ export class CommandAdapt {
       }
       curTd.rowspan = 1;
     }
-    // 重新渲染
     const curIndex = curTd.value.length - 1;
     this.range.setRange(curIndex, curIndex);
     this.draw.render();
@@ -1265,7 +1212,6 @@ export class CommandAdapt {
     ) {
       return;
     }
-    // 重设垂直对齐方式
     curTd.verticalAlign = payload;
     const { endIndex } = this.range.getRange();
     this.draw.render({
@@ -1527,7 +1473,6 @@ export class CommandAdapt {
     const elementList = this.draw.getElementList();
     const startElement = elementList[startIndex];
     if (startElement.type !== ElementType.HYPERLINK) return null;
-    // 向左查找
     let preIndex = startIndex;
     while (preIndex > 0) {
       const preElement = elementList[preIndex];
@@ -1537,7 +1482,6 @@ export class CommandAdapt {
       }
       preIndex--;
     }
-    // 向右查找
     let nextIndex = startIndex + 1;
     while (nextIndex < elementList.length) {
       const nextElement = elementList[nextIndex];
@@ -1547,7 +1491,6 @@ export class CommandAdapt {
       }
       nextIndex++;
     }
-    // 控件在最后
     if (nextIndex === elementList.length) {
       rightIndex = nextIndex - 1;
     }
@@ -1556,19 +1499,16 @@ export class CommandAdapt {
   }
 
   public deleteHyperlink() {
-    // 获取超链接索引
     const hyperRange = this.getHyperlinkRange();
     if (!hyperRange) return;
     const elementList = this.draw.getElementList();
     const [leftIndex, rightIndex] = hyperRange;
-    // 删除元素
     this.draw.spliceElementList(
       elementList,
       leftIndex,
       rightIndex - leftIndex + 1
     );
     this.draw.getHyperlinkParticle().clearHyperlinkPopup();
-    // 重置画布
     const newIndex = leftIndex - 1;
     this.range.setRange(newIndex, newIndex);
     this.draw.render({
@@ -1577,12 +1517,10 @@ export class CommandAdapt {
   }
 
   public cancelHyperlink() {
-    // 获取超链接索引
     const hyperRange = this.getHyperlinkRange();
     if (!hyperRange) return;
     const elementList = this.draw.getElementList();
     const [leftIndex, rightIndex] = hyperRange;
-    // 删除属性
     for (let i = leftIndex; i <= rightIndex; i++) {
       const element = elementList[i];
       delete element.type;
@@ -1591,7 +1529,6 @@ export class CommandAdapt {
       delete element.underline;
     }
     this.draw.getHyperlinkParticle().clearHyperlinkPopup();
-    // 重置画布
     const { endIndex } = this.range.getRange();
     this.draw.render({
       curIndex: endIndex,
@@ -1650,7 +1587,6 @@ export class CommandAdapt {
     });
 
     this.draw.getHyperlinkParticle().clearHyperlinkPopup();
-    // 重置画布
     const { endIndex } = this.range.getRange();
     this.draw.render({
       curIndex: endIndex,
@@ -1667,7 +1603,6 @@ export class CommandAdapt {
     if (!~startIndex && !~endIndex) return;
     const elementList = this.draw.getElementList();
     let curIndex = -1;
-    // 光标存在分割线，则判断为修改线段逻辑
     const endElement = elementList[endIndex + 1];
     if (endElement && endElement.type === ElementType.SEPARATOR) {
       if (
@@ -1684,7 +1619,6 @@ export class CommandAdapt {
         type: ElementType.SEPARATOR,
         dashArray: payload,
       };
-      // 从行头增加分割线
       formatElementContext(elementList, [newElement], startIndex);
       if (startIndex !== 0 && elementList[startIndex].value === ZERO) {
         this.draw.spliceElementList(elementList, startIndex, 1, newElement);
@@ -1810,14 +1744,12 @@ export class CommandAdapt {
     if (!payload || new RegExp(`${ZERO}`, 'g').test(payload)) return;
     const matchList = this.draw.getSearch().getSearchMatchList();
     if (!matchList.length) return;
-    // 匹配index变化的差值
+    // index
     let pageDiffCount = 0;
     let tableDiffCount = 0;
-    // 匹配搜索词的组标识
     let curGroupId = '';
-    // 表格上下文
     let curTdId = '';
-    // 搜索值 > 替换值：增加元素；搜索值 < 替换值：减少元素
+    // > ：； < ：
     let firstMatchIndex = -1;
     const elementList = this.draw.getOriginalElementList();
     for (let m = 0; m < matchList.length; m++) {
@@ -1831,7 +1763,6 @@ export class CommandAdapt {
         const curTableIndex = tableIndex! + pageDiffCount;
         const tableElementList =
           elementList[curTableIndex].trList![trIndex!].tdList[tdIndex!].value;
-        // 表格内元素
         const curIndex = index + tableDiffCount;
         const tableElement = tableElementList[curIndex];
         if (curGroupId === match.groupId) {
@@ -1884,7 +1815,7 @@ export class CommandAdapt {
       curGroupId = match.groupId;
     }
     if (!~firstMatchIndex) return;
-    // 定位-首个被匹配关键词后
+    // -
     const firstMatch = matchList[firstMatchIndex];
     const firstIndex = firstMatch.index + (payload.length - 1);
     if (firstMatch.type === EditorContext.TABLE) {
@@ -1908,7 +1839,6 @@ export class CommandAdapt {
       });
     }
     this.range.setRange(firstIndex, firstIndex);
-    // 重新渲染
     this.draw.render({
       curIndex: firstIndex,
     });
@@ -1933,7 +1863,6 @@ export class CommandAdapt {
     const elementList = this.draw.getElementList();
     const element = elementList[startIndex];
     if (!element || element.type !== ElementType.IMAGE) return;
-    // 替换图片
     element.id = getUUID();
     element.value = payload;
     this.draw.render({
@@ -1990,15 +1919,12 @@ export class CommandAdapt {
     const range = this.range.getRange();
     const { startIndex, endIndex } = range;
     if (!~startIndex && !~endIndex) return null;
-    // 选区信息
     const isCollapsed = startIndex === endIndex;
-    // 元素信息
     const elementList = this.draw.getElementList();
     const startElement = pickElementAttr(
       elementList[isCollapsed ? startIndex : startIndex + 1]
     );
     const endElement = pickElementAttr(elementList[endIndex]);
-    // 页码信息
     const positionList = this.position.getPositionList();
     const startPageNo = positionList[startIndex].pageNo;
     const endPageNo = positionList[endIndex].pageNo;
@@ -2058,7 +1984,6 @@ export class CommandAdapt {
     if (!payload.length) return;
     const isReadonly = this.draw.isReadonly();
     if (isReadonly) return;
-    // 格式化上下文信息
     const { startIndex } = this.range.getRange();
     const elementList = this.draw.getElementList();
     formatElementContext(elementList, payload, startIndex);
@@ -2085,10 +2010,8 @@ export class CommandAdapt {
     const elementList = this.draw.getElementList();
     const element = elementList[startIndex];
     if (element.type !== ElementType.CONTROL) return;
-    // 删除控件
     const control = this.draw.getControl();
     const newIndex = control.removeControl(startIndex);
-    // 重新渲染
     this.range.setRange(newIndex, newIndex);
     this.draw.render({
       curIndex: newIndex,

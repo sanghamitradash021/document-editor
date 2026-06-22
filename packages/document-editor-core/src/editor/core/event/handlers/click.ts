@@ -5,7 +5,6 @@ import { CanvasEvent } from '../CanvasEvent';
 function dblclick(host: CanvasEvent, evt: MouseEvent) {
   const draw = host.getDraw();
   const position = draw.getPosition();
-  // 切换区域
   if (draw.getIsPagingMode()) {
     const positionContext = position.getPositionByXY({
       x: evt.offsetX,
@@ -16,17 +15,14 @@ function dblclick(host: CanvasEvent, evt: MouseEvent) {
       return;
     }
   }
-  // 自动扩选文字
   const cursorPosition = position.getCursorPosition();
   if (!cursorPosition) return;
   const { value, index } = cursorPosition;
-  // 判断是否是数字或英文
   let upCount = 0;
   let downCount = 0;
   const isNumber = NUMBER_LIKE_REG.test(value);
   if (isNumber || LETTER_REG.test(value)) {
     const elementList = draw.getElementList();
-    // 向上查询
     let upStartIndex = index - 1;
     while (upStartIndex > 0) {
       const value = elementList[upStartIndex].value;
@@ -40,7 +36,6 @@ function dblclick(host: CanvasEvent, evt: MouseEvent) {
         break;
       }
     }
-    // 向下查询
     let downStartIndex = index + 1;
     while (downStartIndex < elementList.length) {
       const value = elementList[downStartIndex].value;
@@ -55,10 +50,8 @@ function dblclick(host: CanvasEvent, evt: MouseEvent) {
       }
     }
   }
-  // 设置选中区域
   const rangeManager = draw.getRange();
   rangeManager.setRange(index - upCount - 1, index + downCount);
-  // 刷新文档
   draw.render({
     isSubmitHistory: false,
     isSetCursor: false,
@@ -73,10 +66,8 @@ function threeClick(host: CanvasEvent) {
   if (!cursorPosition) return;
   const { index } = cursorPosition;
   const elementList = draw.getElementList();
-  // 判断是否是零宽字符
   let upCount = 0;
   let downCount = 0;
-  // 向上查询
   let upStartIndex = index - 1;
   while (upStartIndex > 0) {
     const value = elementList[upStartIndex].value;
@@ -87,7 +78,6 @@ function threeClick(host: CanvasEvent) {
       break;
     }
   }
-  // 向下查询
   let downStartIndex = index + 1;
   while (downStartIndex < elementList.length) {
     const value = elementList[downStartIndex].value;
@@ -98,10 +88,8 @@ function threeClick(host: CanvasEvent) {
       break;
     }
   }
-  // 设置选中区域
   const rangeManager = draw.getRange();
   rangeManager.setRange(index - upCount - 1, index + downCount);
-  // 刷新文档
   draw.render({
     isSubmitHistory: false,
     isSetCursor: false,

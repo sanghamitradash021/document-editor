@@ -5,7 +5,7 @@ import { Draw } from '../Draw';
 export class PageBreakParticle {
   static readonly font: string = 'Yahei';
   static readonly fontSize: number = 12;
-  static readonly displayName: string = '分页符';
+  static readonly displayName: string = '';
   static readonly lineDash: number[] = [3, 1];
 
   private draw: Draw;
@@ -32,7 +32,6 @@ export class PageBreakParticle {
     ctx.font = `${size}px ${font}`;
     const textMeasure = ctx.measureText(displayName);
     const halfX = (elementWidth - textMeasure.width) / 2;
-    // 线段
     ctx.setLineDash(lineDash);
     ctx.translate(0, 0.5 + offsetY);
     ctx.beginPath();
@@ -41,7 +40,6 @@ export class PageBreakParticle {
     ctx.moveTo(x + halfX + textMeasure.width, y);
     ctx.lineTo(x + elementWidth, y);
     ctx.stroke();
-    // 文字
     ctx.fillText(
       displayName,
       x + halfX,

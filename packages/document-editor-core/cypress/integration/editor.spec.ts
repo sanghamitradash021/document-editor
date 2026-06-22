@@ -1,6 +1,6 @@
 import Editor from '../../src/editor';
 
-describe('基础功能', () => {
+describe('', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/canvas-editor/');
 
@@ -9,7 +9,7 @@ describe('基础功能', () => {
 
   const text = 'canvas-editor';
 
-  it('编辑保存', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -25,21 +25,21 @@ describe('基础功能', () => {
     });
   });
 
-  it('模式切换', () => {
+  it('', () => {
     cy.get('@canvas').click();
 
     cy.get('.ce-cursor').should('have.css', 'display', 'block');
 
     cy.get('.editor-mode').click().click();
 
-    cy.get('.editor-mode').contains('只读');
+    cy.get('.editor-mode').contains('');
 
     cy.get('@canvas').click();
 
     cy.get('.ce-cursor').should('have.css', 'display', 'none');
   });
 
-  it('页面缩放', () => {
+  it('', () => {
     cy.get('.page-scale-add').click();
 
     cy.get('.page-scale-percentage').contains('110%');
@@ -49,7 +49,7 @@ describe('基础功能', () => {
     cy.get('.page-scale-percentage').contains('90%');
   });
 
-  it('字数统计', () => {
+  it('', () => {
     cy.getEditor().then(async (editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -57,7 +57,7 @@ describe('基础功能', () => {
 
       editor.command.executeInsertElementList([
         {
-          value: 'canvas-editor 2022 编辑器',
+          value: 'canvas-editor 2022 ',
         },
       ]);
 

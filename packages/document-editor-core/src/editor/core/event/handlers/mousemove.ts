@@ -2,9 +2,7 @@ import { CanvasEvent } from '../CanvasEvent';
 
 export function mousemove(evt: MouseEvent, host: CanvasEvent) {
   const draw = host.getDraw();
-  // 是否是拖拽文字
   if (host.isAllowDrag) {
-    // 是否允许拖拽到选区
     const x = evt.offsetX;
     const y = evt.offsetY;
     const { startIndex, endIndex } = host.cacheRange!;
@@ -29,11 +27,10 @@ export function mousemove(evt: MouseEvent, host: CanvasEvent) {
   if (!host.isAllowSelection || !host.mouseDownStartPosition) return;
   const target = evt.target as HTMLDivElement;
   const pageIndex = target.dataset.index;
-  // 设置pageNo
+  // pageNo
   if (pageIndex) {
     draw.setPageNo(Number(pageIndex));
   }
-  // 结束位置
   const position = draw.getPosition();
   const positionResult = position.getPositionByXY({
     x: evt.offsetX,
@@ -49,7 +46,7 @@ export function mousemove(evt: MouseEvent, host: CanvasEvent) {
     trIndex: startTrIndex,
   } = host.mouseDownStartPosition;
   const endIndex = isTable ? tdValueIndex! : index;
-  // 判断是否是表格跨行/列
+  // /
   const rangeManager = draw.getRange();
   if (
     isTable &&
@@ -67,7 +64,6 @@ export function mousemove(evt: MouseEvent, host: CanvasEvent) {
     );
   } else {
     let end = ~endIndex ? endIndex : 0;
-    // 开始位置
     let start = startIndex;
     if (start > end) {
       // prettier-ignore
@@ -76,7 +72,6 @@ export function mousemove(evt: MouseEvent, host: CanvasEvent) {
     if (start === end) return;
     rangeManager.setRange(start, end);
   }
-  // 绘制
   draw.render({
     isSubmitHistory: false,
     isSetCursor: false,

@@ -1,4 +1,4 @@
-// 简化版markdown转IElement插件示例，代码仅为参考
+// markdownIElement，
 import Editor, {
   Command,
   ElementType,

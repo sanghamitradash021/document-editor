@@ -183,7 +183,6 @@ export default class Editor {
         editorOptions,
       });
     });
-    // 监听
     this.listener = new Listener();
     this.eventBus = new EventBus<EventBusMap>();
     // start up
@@ -249,7 +248,6 @@ export {
   DOMEventHandlers,
 };
 
-// 对外类型
 export type {
   IElement,
   IEditorData,

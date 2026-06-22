@@ -83,7 +83,6 @@ export class RangeManager {
     );
   }
 
-  // 获取光标所选位置行信息
   public getRangeRow(): RangeRowMap | null {
     const { startIndex, endIndex } = this.range;
     if (!~startIndex && !~endIndex) return null;
@@ -103,14 +102,12 @@ export class RangeManager {
     return rangeRow;
   }
 
-  // 获取选取段落信息
   public getRangeParagraph(): RangeRowArray | null {
     const { startIndex, endIndex } = this.range;
     if (!~startIndex && !~endIndex) return null;
     const positionList = this.position.getPositionList();
     const elementList = this.draw.getElementList();
     const rangeRow: RangeRowArray = new Map();
-    // 向上查找
     let start = startIndex;
     while (start >= 0) {
       const { pageNo, rowNo } = positionList[start];
@@ -130,7 +127,6 @@ export class RangeManager {
       }
       start--;
     }
-    // 中间选择
     if (startIndex !== endIndex) {
       let middle = startIndex + 1;
       while (middle < endIndex) {
@@ -146,7 +142,6 @@ export class RangeManager {
         middle++;
       }
     }
-    // 向下查找
     let end = endIndex;
     while (end < positionList.length) {
       if (
@@ -169,13 +164,10 @@ export class RangeManager {
     return rangeRow;
   }
 
-  // 获取选区元素列表
   public getRangeElementList(): IElement[] | null {
     const { startIndex, endIndex } = this.range;
     if (!~startIndex && !~endIndex) return null;
-    // 需要改变的元素列表
     const rangeElementList: IElement[] = [];
-    // 选区行信息
     const rangeRow = this.getRangeParagraph();
     if (!rangeRow) return null;
     const elementList = this.draw.getElementList();
@@ -239,7 +231,6 @@ export class RangeManager {
       endTrIndex
     );
     this.range.zone = this.draw.getZone().getZone();
-    // 激活控件
     const control = this.draw.getControl();
     if (~startIndex && ~endIndex) {
       const elementList = this.draw.getElementList();
@@ -268,27 +259,21 @@ export class RangeManager {
     const rangeStyleChangeListener = this.listener.rangeStyleChange;
     const isSubscribeRangeStyleChange =
       this.eventBus.isSubscribe('rangeStyleChange');
-    // 结束光标位置
     const { startIndex, endIndex, isCrossRowCol } = this.range;
     if (!~startIndex && !~endIndex) return;
     let curElement: IElement | null;
     if (isCrossRowCol) {
-      // 单元格选择以当前表格定位
       const originalElementList = this.draw.getOriginalElementList();
       const positionContext = this.position.getPositionContext();
       curElement = originalElementList[positionContext.index!];
     } else {
       const index = ~endIndex ? endIndex : 0;
-      // 行首以第一个非换行符元素定位
       const elementList = this.draw.getElementList();
       curElement = getAnchorElement(elementList, index);
     }
     if (!curElement) return;
-    // 选取元素列表
     const curElementList = this.getSelection() || [curElement];
-    // 类型
     const type = curElement.type || ElementType.TEXT;
-    // 富文本
     const font = curElement.font || this.options.defaultFont;
     const size = curElement.size || this.options.defaultSize;
     let bold = !~curElementList.findIndex(el => !el.bold);
@@ -312,7 +297,6 @@ export class RangeManager {
     const level = curElement.level || null;
     const listType = curElement.listType || null;
     const listStyle = curElement.listStyle || null;
-    // 菜单
     const painter = !!this.draw.getPainterStyle();
     const undo = this.historyManager.isCanUndo();
     const redo = this.historyManager.isCanRedo();
@@ -351,27 +335,21 @@ export class RangeManager {
     const isSubscribeRangeStyleChange =
       this.eventBus.isSubscribe('rangeStyleChange');
     if (!rangeStyleChangeListener && !isSubscribeRangeStyleChange) return;
-    // 结束光标位置
     const { startIndex, endIndex, isCrossRowCol } = this.range;
     if (!~startIndex && !~endIndex) return;
     let curElement: IElement | null;
     if (isCrossRowCol) {
-      // 单元格选择以当前表格定位
       const originalElementList = this.draw.getOriginalElementList();
       const positionContext = this.position.getPositionContext();
       curElement = originalElementList[positionContext.index!];
     } else {
       const index = ~endIndex ? endIndex : 0;
-      // 行首以第一个非换行符元素定位
       const elementList = this.draw.getElementList();
       curElement = getAnchorElement(elementList, index);
     }
     if (!curElement) return;
-    // 选取元素列表
     const curElementList = this.getSelection() || [curElement];
-    // 类型
     const type = curElement.type || ElementType.TEXT;
-    // 富文本
     const font = curElement.font || this.options.defaultFont;
     const size = curElement.size || this.options.defaultSize;
     let bold = !~curElementList.findIndex(el => !el.bold);
@@ -395,7 +373,6 @@ export class RangeManager {
     const level = curElement.level || null;
     const listType = curElement.listType || null;
     const listStyle = curElement.listStyle || null;
-    // 菜单
     const painter = !!this.draw.getPainterStyle();
     const undo = this.historyManager.isCanUndo();
     const redo = this.historyManager.isCanRedo();
@@ -474,7 +451,7 @@ export class RangeManager {
     const endElement = elementList[endIndex];
     if (startIndex === endIndex) {
       if (startElement.controlComponent === ControlComponent.PLACEHOLDER) {
-        // 找到第一个placeholder字符
+        // placeholder
         let index = startIndex - 1;
         while (index > 0) {
           const preElement = elementList[index];
@@ -490,7 +467,6 @@ export class RangeManager {
         }
       }
     } else {
-      // 首、尾为占位符时，收缩到最后一个前缀字符后
       if (
         startElement.controlComponent === ControlComponent.PLACEHOLDER ||
         endElement.controlComponent === ControlComponent.PLACEHOLDER
@@ -509,7 +485,7 @@ export class RangeManager {
           index--;
         }
       }
-      // 向右查找到第一个Value
+      // Value
       if (startElement.controlComponent === ControlComponent.PREFIX) {
         let index = startIndex + 1;
         while (index < elementList.length) {
@@ -530,7 +506,7 @@ export class RangeManager {
           index++;
         }
       }
-      // 向左查找到第一个Value
+      // Value
       if (endElement.controlComponent !== ControlComponent.VALUE) {
         let index = startIndex - 1;
         while (index > 0) {

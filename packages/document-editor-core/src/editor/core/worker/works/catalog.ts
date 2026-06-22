@@ -26,7 +26,6 @@ const titleOrderNumberMapping: Record<TitleLevel, number> = {
 const ZERO = '\u200B';
 
 function getCatalog(elementList: IElement[]): ICatalog | null {
-  // 筛选标题
   const titleElementList: IElement[] = [];
   let t = 0;
   while (t < elementList.length) {
@@ -59,7 +58,6 @@ function getCatalog(elementList: IElement[]): ICatalog | null {
     t++;
   }
   if (!titleElementList.length) return null;
-  // 查找到比最新元素大的标题时终止
   const recursiveInsert = (title: IElement, catalogItem: ICatalogItem) => {
     const subCatalogItem =
       catalogItem.subCatalog[catalogItem.subCatalog.length - 1];
@@ -76,9 +74,6 @@ function getCatalog(elementList: IElement[]): ICatalog | null {
       });
     }
   };
-  // 循环标题组
-  // 如果当前列表级别小于标题组最新标题级别：则递归查找最小级别并追加
-  // 如果大于：则直接追加至当前标题组
   const catalog: ICatalog = [];
   for (let e = 0; e < titleElementList.length; e++) {
     const title = titleElementList[e];

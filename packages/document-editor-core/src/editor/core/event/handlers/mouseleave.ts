@@ -1,7 +1,7 @@
 import { CanvasEvent } from '../CanvasEvent';
 
 export function mouseleave(evt: MouseEvent, host: CanvasEvent) {
-  // 是否还在canvas内部
+  // canvas
   const draw = host.getDraw();
   const pageContainer = draw.getPageContainer();
   const { x, y, width, height } = pageContainer.getBoundingClientRect();

@@ -14,14 +14,11 @@ export function input(data: string, host: CanvasEvent) {
   const cursorPosition = position.getCursorPosition();
   if (!data || !cursorPosition) return;
   const isComposing = host.isComposing;
-  // 正在合成文本进行非输入操作
   if (isComposing && host.compositionInfo?.value === data) return;
   const control = draw.getControl();
   if (control.isPartRangeInControlOutside()) {
-    // 忽略选区部分在控件的输入
     return;
   }
-  // 移除合成输入
   removeComposingInput(host);
   if (!isComposing) {
     const cursor = draw.getCursor();
@@ -32,7 +29,6 @@ export function input(data: string, host: CanvasEvent) {
   const text = data.replaceAll(`\n`, ZERO);
   const rangeManager = draw.getRange();
   const { startIndex, endIndex } = rangeManager.getRange();
-  // 格式化元素
   const elementList = draw.getElementList();
   const copyElement = getAnchorElement(elementList, endIndex);
   if (!copyElement) return;
@@ -64,7 +60,7 @@ export function input(data: string, host: CanvasEvent) {
     }
     return newElement;
   });
-  // 控件-移除placeholder
+  // -placeholder
   let curIndex: number;
   if (activeControl && !control.isRangInPostfix()) {
     curIndex = control.setValue(inputData);

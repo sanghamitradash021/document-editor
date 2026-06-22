@@ -135,7 +135,6 @@ export class Signature {
       this._dispose();
     };
     menuContainer.append(cancelBtn);
-    // 确认按钮
     const confirmBtn = document.createElement('button');
     confirmBtn.append(document.createTextNode('Submit'));
     confirmBtn.type = 'submit';
@@ -147,7 +146,6 @@ export class Signature {
     };
     menuContainer.append(confirmBtn);
     signatureContainer.append(menuContainer);
-    // 渲染
     document.body.append(container);
     this.container = container;
     this.mask = mask;
@@ -205,19 +203,17 @@ export class Signature {
 
   private _draw(evt: MouseEvent) {
     if (!this.isDrawing) return;
-    // 计算鼠标移动速度
     const curTimestamp = performance.now();
     const distance = Math.sqrt(evt.movementX ** 2 + evt.movementY ** 2);
     const speed = distance / (curTimestamp - this.preTimeStamp);
-    // 目标线宽：最小速度1，最大速度5，系数3
+    // ：1，5，3
     const SPEED_FACTOR = 3;
     const targetLineWidth = Math.min(5, Math.max(1, 5 - speed * SPEED_FACTOR));
-    // 平滑过渡算法（20%的变化比例）调整线条粗细：系数0.2
+    // （20%）：0.2
     const SMOOTH_FACTOR = 0.2;
     this.ctx.lineWidth =
       this.ctx.lineWidth * (1 - SMOOTH_FACTOR) +
       targetLineWidth * SMOOTH_FACTOR;
-    // 绘制
     const { offsetX, offsetY } = evt;
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
@@ -227,7 +223,6 @@ export class Signature {
     this.y = offsetY;
     this.linePoints.push([offsetX, offsetY]);
     this.isDrawn = true;
-    // 缓存之前时间戳
     this.preTimeStamp = curTimestamp;
   }
 
@@ -251,7 +246,6 @@ export class Signature {
 
   private _toData(): ISignatureResult | null {
     if (!this.linePoints.length) return null;
-    // 查找矩形四角坐标
     const startX = this.linePoints[0][0];
     const startY = this.linePoints[0][1];
     let minX = startX;
@@ -273,7 +267,6 @@ export class Signature {
         maxY = point[1];
       }
     }
-    // 增加边框宽度
     const lineWidth = this.ctx.lineWidth;
     minX = minX < lineWidth ? 0 : minX - lineWidth;
     minY = minY < lineWidth ? 0 : minY - lineWidth;
@@ -281,7 +274,6 @@ export class Signature {
     maxY = maxY + lineWidth;
     const sw = maxX - minX;
     const sh = maxY - minY;
-    // 裁剪图像
     const imageData = this.ctx.getImageData(
       minX * this.dpr,
       minY * this.dpr,

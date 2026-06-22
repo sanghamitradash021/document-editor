@@ -6,7 +6,6 @@ function dragover(evt: DragEvent | MouseEvent, host: CanvasEvent) {
   const isReadonly = draw.isReadonly();
   if (isReadonly) return;
   evt.preventDefault();
-  // 非编辑器区禁止拖放
   const pageContainer = draw.getPageContainer();
   const editorRegion = findParent(
     evt.target as Element,
@@ -16,7 +15,7 @@ function dragover(evt: DragEvent | MouseEvent, host: CanvasEvent) {
   if (!editorRegion) return;
   const target = evt.target as HTMLDivElement;
   const pageIndex = target.dataset.index;
-  // 设置pageNo
+  // pageNo
   if (pageIndex) {
     draw.setPageNo(Number(pageIndex));
   }
@@ -27,7 +26,6 @@ function dragover(evt: DragEvent | MouseEvent, host: CanvasEvent) {
   });
   if (!positionContext) return;
   const { isTable, tdValueIndex, index } = positionContext;
-  // 设置选区及光标位置
   const positionList = position.getPositionList();
   const curIndex = isTable ? tdValueIndex! : index;
   if (~index) {

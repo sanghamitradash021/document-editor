@@ -22,7 +22,6 @@ function getElementIndexByDragId(dragId: string, elementList: IElement[]) {
 }
 
 export function mouseup(evt: MouseEvent, host: CanvasEvent) {
-  // 判断是否允许拖放
   if (host.isAllowDrop) {
     const draw = host.getDraw();
     if (draw.isReadonly()) return;
@@ -33,7 +32,7 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
     const cacheElementList = host.cacheElementList!;
     const cachePositionList = host.cachePositionList!;
     const range = rangeManager.getRange();
-    // 是否需要拖拽-位置发生改变
+    // -
     if (
       range.startIndex >= cacheRange.startIndex &&
       range.endIndex <= cacheRange.endIndex
@@ -48,7 +47,6 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
       });
       return;
     }
-    // 是否是不可拖拽的控件结构元素
     const dragElementList = cacheElementList.slice(
       cacheRange.startIndex + 1,
       cacheRange.endIndex + 1
@@ -57,7 +55,7 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
       element => element.type === ElementType.CONTROL
     );
     if (isContainControl) {
-      // 仅允许 (最前/后元素不是控件 || 在控件前后 || 文本控件且是值) 拖拽
+      // (/ || || )
       const cacheStartElement = cacheElementList[cacheRange.startIndex + 1];
       const cacheEndElement = cacheElementList[cacheRange.endIndex];
       const isAllowDragControl =
@@ -81,7 +79,6 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
         return;
       }
     }
-    // 格式化元素
     const editorOptions = draw.getOptions();
     const elementList = draw.getElementList();
     const replaceElementList = dragElementList.map(el => {
@@ -110,12 +107,11 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
       }
     });
     formatElementContext(elementList, replaceElementList, range.startIndex);
-    // 缓存拖拽选区开始结束id
+    // id
     const cacheRangeStartId = createDragId(
       cacheElementList[cacheRange.startIndex]
     );
     const cacheRangeEndId = createDragId(cacheElementList[cacheRange.endIndex]);
-    // 设置拖拽值
     const replaceLength = replaceElementList.length;
     let rangeStart = range.startIndex;
     let rangeEnd = rangeStart + replaceLength;
@@ -141,10 +137,9 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
       });
       return;
     }
-    // 缓存当前开始结束id
+    // id
     const rangeStartId = createDragId(elementList[rangeStart]);
     const rangeEndId = createDragId(elementList[rangeEnd]);
-    // 删除原有拖拽元素
     const cacheRangeStartIndex = getElementIndexByDragId(
       cacheRangeStartId,
       cacheElementList
@@ -171,7 +166,6 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
         cacheRangeEndIndex - cacheRangeStartIndex
       );
     }
-    // 重设上下文
     const startElement = elementList[range.startIndex];
     const cacheStartElement = cacheElementList[cacheRange.startIndex];
     const startPosition = positionList[range.startIndex];
@@ -180,12 +174,12 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
     let positionContextIndex = positionContext.index;
     if (positionContextIndex) {
       if (startElement.tableId && !cacheStartElement.tableId) {
-        // 表格外移动到表格内&&表格之前
+        // &&
         if (cacheStartPosition.index < positionContextIndex) {
           positionContextIndex -= replaceLength;
         }
       } else if (!startElement.tableId && cacheStartElement.tableId) {
-        // 表格内移到表格外&&表格之前
+        // &&
         if (startPosition.index < positionContextIndex) {
           positionContextIndex += replaceLength;
         }
@@ -195,7 +189,6 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
         index: positionContextIndex,
       });
     }
-    // 重设选区
     const rangeStartIndex = getElementIndexByDragId(rangeStartId, elementList);
     const rangeEndIndex = getElementIndexByDragId(rangeEndId, elementList);
     rangeManager.setRange(
@@ -207,12 +200,10 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
       range.startTrIndex,
       range.endTrIndex
     );
-    // 重新渲染
     draw.render({
       isSetCursor: false,
     });
   } else if (host.isAllowDrag) {
-    // 如果是允许拖拽不允许拖放则光标重置
     host.mousedown(evt);
   }
 }

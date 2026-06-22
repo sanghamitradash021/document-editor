@@ -15,11 +15,8 @@ export class Shortcut {
     this.command = command;
     this.globalShortcutList = [];
     this.agentShortcutList = [];
-    // 内部快捷键
     this._addShortcutList([...richtextKeys, ...titleKeys, ...listKeys]);
-    // 全局快捷键
     this._addEvent();
-    // 编辑器快捷键
     const agentDom = draw.getCursor().getAgentDom();
     agentDom.addEventListener('keydown', this._agentKeydown.bind(this));
   }

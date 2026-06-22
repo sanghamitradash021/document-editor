@@ -94,11 +94,9 @@ export class HyperlinkParticle {
     const height = this.draw.getHeight();
     const pageGap = this.draw.getPageGap();
     const preY = this.draw.getPageNo() * (height + pageGap);
-    // 位置
     this.hyperlinkPopupContainer.style.display = 'block';
     this.hyperlinkPopupContainer.style.left = `${left}px`;
     this.hyperlinkPopupContainer.style.top = `${top + preY + lineHeight}px`;
-    // 标签
     const url = element.url || '#';
     this.hyperlinkDom.href = url;
     this.hyperlinkDom.title = url;

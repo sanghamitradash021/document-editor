@@ -1,6 +1,6 @@
 import { CommandAdapt } from './CommandAdapt';
 
-// 通过CommandAdapt中转避免直接暴露编辑器上下文
+// CommandAdapt
 export class Command {
   public executeMode: CommandAdapt['mode'];
   public executeCut: CommandAdapt['cut'];
@@ -98,7 +98,6 @@ export class Command {
   public getHyperlinkRange: CommandAdapt['getHyperlinkRange'];
 
   constructor(adapt: CommandAdapt) {
-    // 全局命令
     this.executeMode = adapt.mode.bind(adapt);
     this.executeCut = adapt.cut.bind(adapt);
     this.executeCopy = adapt.copy.bind(adapt);
@@ -106,13 +105,11 @@ export class Command {
     this.executeSelectAll = adapt.selectAll.bind(adapt);
     this.executeBackspace = adapt.backspace.bind(adapt);
     this.executeSetRange = adapt.setRange.bind(adapt);
-    // 撤销、重做、格式刷、清除格式
     this.executeUndo = adapt.undo.bind(adapt);
     this.executeRedo = adapt.redo.bind(adapt);
     this.executePainter = adapt.painter.bind(adapt);
     this.executeApplyPainterStyle = adapt.applyPainterStyle.bind(adapt);
     this.executeFormat = adapt.format.bind(adapt);
-    // 字体、字体大小、字体变大、字体变小、加粗、斜体、下划线、删除线、字体颜色、背景色
     this.executeFont = adapt.font.bind(adapt);
     this.executeSize = adapt.size.bind(adapt);
     this.executeSizeAdd = adapt.sizeAdd.bind(adapt);
@@ -125,13 +122,11 @@ export class Command {
     this.executeSubscript = adapt.subscript.bind(adapt);
     this.executeColor = adapt.color.bind(adapt);
     this.executeHighlight = adapt.highlight.bind(adapt);
-    // 标题、对齐方式、列表
     this.executeTitle = adapt.title.bind(adapt);
     this.executeList = adapt.list.bind(adapt);
     this.executeRowFlex = adapt.rowFlex.bind(adapt);
     this.executeRowMargin = adapt.rowMargin.bind(adapt);
     this.executeParagraphSpacing = adapt.paragraphSpacing.bind(adapt);
-    // 表格、图片上传、超链接、搜索、打印、图片操作
     this.executeInsertTable = adapt.insertTable.bind(adapt);
     this.executeInsertTableTopRow = adapt.insertTableTopRow.bind(adapt);
     this.executeInsertTableBottomRow = adapt.insertTableBottomRow.bind(adapt);
@@ -175,7 +170,6 @@ export class Command {
     this.executeReplaceImageElement = adapt.replaceImageElement.bind(adapt);
     this.executeSaveAsImageElement = adapt.saveAsImageElement.bind(adapt);
     this.executeChangeImageDisplay = adapt.changeImageDisplay.bind(adapt);
-    // 页面模式、页面缩放、纸张大小、纸张方向、页边距
     this.executePageMode = adapt.pageMode.bind(adapt);
     this.executePageScaleRecovery = adapt.pageScaleRecovery.bind(adapt);
     this.executePageScaleMinus = adapt.pageScaleMinus.bind(adapt);
@@ -183,7 +177,6 @@ export class Command {
     this.executePaperSize = adapt.paperSize.bind(adapt);
     this.executePaperDirection = adapt.paperDirection.bind(adapt);
     this.executeSetPaperMargin = adapt.setPaperMargin.bind(adapt);
-    // 通用
     this.executeInsertElementList = adapt.insertElementList.bind(adapt);
     this.executeAppendElementList = adapt.appendElementList.bind(adapt);
     this.executeSetValue = adapt.setValue.bind(adapt);
@@ -192,7 +185,6 @@ export class Command {
     this.executeLocationCatalog = adapt.locationCatalog.bind(adapt);
     this.executeWordTool = adapt.wordTool.bind(adapt);
     this.executeGlobalHyperlink = adapt.globalHyperlink.bind(adapt);
-    // 获取
     this.getImage = adapt.getImage.bind(adapt);
     this.getValue = adapt.getValue.bind(adapt);
     this.getHTML = adapt.getHTML.bind(adapt);

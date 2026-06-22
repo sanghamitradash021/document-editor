@@ -34,10 +34,9 @@ export function writeElementList(
   options: DeepRequired<IEditorOption>
 ) {
   const clipboardDom = createDomFromElementList(elementList, options);
-  // 写入剪贴板
   document.body.append(clipboardDom);
   const text = clipboardDom.innerText;
-  // 先追加后移除，否则innerText无法解析换行符
+  // ，innerText
   clipboardDom.remove();
   const html = clipboardDom.innerHTML;
   if (!text || !html) return;

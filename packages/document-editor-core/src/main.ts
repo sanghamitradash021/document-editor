@@ -92,7 +92,7 @@ window.onload = function () {
   };
 
   const redoDom = document.querySelector<HTMLDivElement>('.menu-item__redo')!;
-  redoDom.title = `重做(${isApple ? '⌘' : 'Ctrl'}+Y)`;
+  redoDom.title = `(${isApple ? '⌘' : 'Ctrl'}+Y)`;
   redoDom.onclick = function () {
     console.log('redo');
     instance.command.executeRedo();
@@ -138,7 +138,7 @@ window.onload = function () {
     document.querySelector<HTMLDivElement>('.menu-item__size')!;
   const sizeSelectDom = sizeSetDom.querySelector<HTMLDivElement>('.select')!;
   const sizeOptionDom = sizeSetDom.querySelector<HTMLDivElement>('.options')!;
-  sizeSetDom.title = `设置字号`;
+  sizeSetDom.title = ``;
   sizeSetDom.onclick = function () {
     console.log('size');
     sizeOptionDom.classList.toggle('visible');
@@ -151,7 +151,7 @@ window.onload = function () {
   const sizeAddDom = document.querySelector<HTMLDivElement>(
     '.menu-item__size-add'
   )!;
-  sizeAddDom.title = `增大字号(${isApple ? '⌘' : 'Ctrl'}+[)`;
+  sizeAddDom.title = `(${isApple ? '⌘' : 'Ctrl'}+[)`;
   sizeAddDom.onclick = function () {
     console.log('size-add');
     instance.command.executeSizeAdd();
@@ -160,14 +160,14 @@ window.onload = function () {
   const sizeMinusDom = document.querySelector<HTMLDivElement>(
     '.menu-item__size-minus'
   )!;
-  sizeMinusDom.title = `减小字号(${isApple ? '⌘' : 'Ctrl'}+])`;
+  sizeMinusDom.title = `(${isApple ? '⌘' : 'Ctrl'}+])`;
   sizeMinusDom.onclick = function () {
     console.log('size-minus');
     instance.command.executeSizeMinus();
   };
 
   const boldDom = document.querySelector<HTMLDivElement>('.menu-item__bold')!;
-  boldDom.title = `加粗(${isApple ? '⌘' : 'Ctrl'}+B)`;
+  boldDom.title = `(${isApple ? '⌘' : 'Ctrl'}+B)`;
   boldDom.onclick = function () {
     console.log('bold');
     instance.command.executeBold();
@@ -175,7 +175,7 @@ window.onload = function () {
 
   const italicDom =
     document.querySelector<HTMLDivElement>('.menu-item__italic')!;
-  italicDom.title = `斜体(${isApple ? '⌘' : 'Ctrl'}+I)`;
+  italicDom.title = `(${isApple ? '⌘' : 'Ctrl'}+I)`;
   italicDom.onclick = function () {
     console.log('italic');
     instance.command.executeItalic();
@@ -184,7 +184,7 @@ window.onload = function () {
   const underlineDom = document.querySelector<HTMLDivElement>(
     '.menu-item__underline'
   )!;
-  underlineDom.title = `下划线(${isApple ? '⌘' : 'Ctrl'}+U)`;
+  underlineDom.title = `(${isApple ? '⌘' : 'Ctrl'}+U)`;
   underlineDom.onclick = function () {
     console.log('underline');
     instance.command.executeUnderline();
@@ -201,7 +201,7 @@ window.onload = function () {
   const superscriptDom = document.querySelector<HTMLDivElement>(
     '.menu-item__superscript'
   )!;
-  superscriptDom.title = `上标(${isApple ? '⌘' : 'Ctrl'}+Shift+,)`;
+  superscriptDom.title = `(${isApple ? '⌘' : 'Ctrl'}+Shift+,)`;
   superscriptDom.onclick = function () {
     console.log('superscript');
     instance.command.executeSuperscript();
@@ -210,7 +210,7 @@ window.onload = function () {
   const subscriptDom = document.querySelector<HTMLDivElement>(
     '.menu-item__subscript'
   )!;
-  subscriptDom.title = `下标(${isApple ? '⌘' : 'Ctrl'}+Shift+.)`;
+  subscriptDom.title = `(${isApple ? '⌘' : 'Ctrl'}+Shift+.)`;
   subscriptDom.onclick = function () {
     console.log('subscript');
     instance.command.executeSubscript();
@@ -259,7 +259,7 @@ window.onload = function () {
   };
 
   const leftDom = document.querySelector<HTMLDivElement>('.menu-item__left')!;
-  leftDom.title = `左对齐(${isApple ? '⌘' : 'Ctrl'}+L)`;
+  leftDom.title = `(${isApple ? '⌘' : 'Ctrl'}+L)`;
   leftDom.onclick = function () {
     console.log('left');
     instance.command.executeRowFlex(RowFlex.LEFT);
@@ -267,14 +267,14 @@ window.onload = function () {
 
   const centerDom =
     document.querySelector<HTMLDivElement>('.menu-item__center')!;
-  centerDom.title = `居中对齐(${isApple ? '⌘' : 'Ctrl'}+E)`;
+  centerDom.title = `(${isApple ? '⌘' : 'Ctrl'}+E)`;
   centerDom.onclick = function () {
     console.log('center');
     instance.command.executeRowFlex(RowFlex.CENTER);
   };
 
   const rightDom = document.querySelector<HTMLDivElement>('.menu-item__right')!;
-  rightDom.title = `右对齐(${isApple ? '⌘' : 'Ctrl'}+R)`;
+  rightDom.title = `(${isApple ? '⌘' : 'Ctrl'}+R)`;
   rightDom.onclick = function () {
     console.log('right');
     instance.command.executeRowFlex(RowFlex.RIGHT);
@@ -283,7 +283,7 @@ window.onload = function () {
   const alignmentDom = document.querySelector<HTMLDivElement>(
     '.menu-item__alignment'
   )!;
-  alignmentDom.title = `两端对齐(${isApple ? '⌘' : 'Ctrl'}+J)`;
+  alignmentDom.title = `(${isApple ? '⌘' : 'Ctrl'}+J)`;
   alignmentDom.onclick = function () {
     console.log('alignment');
     instance.command.executeRowFlex(RowFlex.ALIGNMENT);
@@ -303,7 +303,7 @@ window.onload = function () {
   };
 
   const listDom = document.querySelector<HTMLDivElement>('.menu-item__list')!;
-  listDom.title = `列表(${isApple ? '⌘' : 'Ctrl'}+Shift+U)`;
+  listDom.title = `(${isApple ? '⌘' : 'Ctrl'}+Shift+U)`;
   const listOptionDom = listDom.querySelector<HTMLDivElement>('.options')!;
   listDom.onclick = function () {
     console.log('list');
@@ -351,14 +351,12 @@ window.onload = function () {
   function setTableTitle(payload: string) {
     tableTitle.innerText = payload;
   }
-  // 恢复初始状态
   function recoveryTable() {
-    // 还原选择样式、标题、选择行列
     removeAllTableCellSelect();
-    setTableTitle('插入');
+    setTableTitle('');
     colIndex = 0;
     rowIndex = 0;
-    // 隐藏panel
+    // panel
     tablePanelContainer.style.display = 'none';
   }
   tableDom.onclick = function () {
@@ -370,11 +368,9 @@ window.onload = function () {
     const rowMarginTop = 10;
     const celMarginRight = 6;
     const { offsetX, offsetY } = evt;
-    // 移除所有选择
     removeAllTableCellSelect();
     colIndex = Math.ceil(offsetX / (celSize + celMarginRight)) || 1;
     rowIndex = Math.ceil(offsetY / (celSize + rowMarginTop)) || 1;
-    // 改变选择样式
     tableCellList.forEach((tr, trIndex) => {
       tr.forEach((td, tdIndex) => {
         if (tdIndex < colIndex && trIndex < rowIndex) {
@@ -382,14 +378,12 @@ window.onload = function () {
         }
       });
     });
-    // 改变表格标题
     setTableTitle(`${rowIndex}×${colIndex}`);
   };
   tableClose.onclick = function () {
     recoveryTable();
   };
   tablePanel.onclick = function () {
-    // 应用选择
     instance.command.executeInsertTable(rowIndex, colIndex);
     recoveryTable();
   };
@@ -404,7 +398,6 @@ window.onload = function () {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
     fileReader.onload = function () {
-      // 计算宽高
       const image = new Image();
       const value = fileReader.result as string;
       image.src = value;
@@ -425,21 +418,21 @@ window.onload = function () {
   hyperlinkDom.onclick = function () {
     console.log('hyperlink');
     new Dialog({
-      title: '超链接',
+      title: '',
       data: [
         {
           type: 'text',
-          label: '文本',
+          label: '',
           name: 'name',
           required: true,
-          placeholder: '请输入文本',
+          placeholder: '',
         },
         {
           type: 'text',
-          label: '链接',
+          label: '',
           name: 'url',
           required: true,
-          placeholder: '请输入链接',
+          placeholder: '',
         },
       ],
       onConfirm: payload => {
@@ -505,25 +498,25 @@ window.onload = function () {
     watermarkOptionDom.classList.toggle('visible');
     if (menu === 'add') {
       new Dialog({
-        title: '水印',
+        title: '',
         data: [
           {
             type: 'text',
-            label: '内容',
+            label: '',
             name: 'data',
             required: true,
-            placeholder: '请输入内容',
+            placeholder: '',
           },
           {
             type: 'color',
-            label: '颜色',
+            label: '',
             name: 'color',
             required: true,
             value: '#AEB5C0',
           },
           {
             type: 'number',
-            label: '字体大小',
+            label: '',
             name: 'size',
             required: true,
             value: '120',
@@ -557,12 +550,12 @@ window.onload = function () {
   codeblockDom.onclick = function () {
     console.log('codeblock');
     new Dialog({
-      title: '代码块',
+      title: '',
       data: [
         {
           type: 'textarea',
           name: 'codeblock',
-          placeholder: '请输入代码',
+          placeholder: '',
           width: 500,
           height: 300,
         },
@@ -617,20 +610,20 @@ window.onload = function () {
     switch (type) {
       case ControlType.TEXT:
         new Dialog({
-          title: '文本控件',
+          title: '',
           data: [
             {
               type: 'text',
-              label: '占位符',
+              label: '',
               name: 'placeholder',
               required: true,
-              placeholder: '请输入占位符',
+              placeholder: '',
             },
             {
               type: 'text',
-              label: '默认值',
+              label: '',
               name: 'value',
-              placeholder: '请输入默认值',
+              placeholder: '',
             },
           ],
           onConfirm: payload => {
@@ -661,28 +654,28 @@ window.onload = function () {
         break;
       case ControlType.SELECT:
         new Dialog({
-          title: '列举控件',
+          title: '',
           data: [
             {
               type: 'text',
-              label: '占位符',
+              label: '',
               name: 'placeholder',
               required: true,
-              placeholder: '请输入占位符',
+              placeholder: '',
             },
             {
               type: 'text',
-              label: '默认值',
+              label: '',
               name: 'code',
-              placeholder: '请输入默认值',
+              placeholder: '',
             },
             {
               type: 'textarea',
-              label: '值集',
+              label: '',
               name: 'valueSets',
               required: true,
               height: 100,
-              placeholder: `请输入值集JSON，例：\n[{\n"value":"有",\n"code":"98175"\n}]`,
+              placeholder: `JSON，：\n[{\n"value":"",\n"code":"98175"\n}]`,
             },
           ],
           onConfirm: payload => {
@@ -711,21 +704,21 @@ window.onload = function () {
         break;
       case ControlType.CHECKBOX:
         new Dialog({
-          title: '复选框控件',
+          title: '',
           data: [
             {
               type: 'text',
-              label: '默认值',
+              label: '',
               name: 'code',
-              placeholder: '请输入默认值，多个值以英文逗号分割',
+              placeholder: '，',
             },
             {
               type: 'textarea',
-              label: '值集',
+              label: '',
               name: 'valueSets',
               required: true,
               height: 100,
-              placeholder: `请输入值集JSON，例：\n[{\n"value":"有",\n"code":"98175"\n}]`,
+              placeholder: `JSON，：\n[{\n"value":"",\n"code":"98175"\n}]`,
             },
           ],
           onConfirm: payload => {
@@ -775,7 +768,7 @@ window.onload = function () {
           type: 'textarea',
           height: 100,
           name: 'value',
-          placeholder: '请输入LaTeX文本',
+          placeholder: 'LaTeX',
         },
       ],
       onConfirm: payload => {
@@ -796,7 +789,6 @@ window.onload = function () {
   dateDom.onclick = function () {
     console.log('date');
     dateDomOptionDom.classList.toggle('visible');
-    // 定位调整
     const bodyRect = document.body.getBoundingClientRect();
     const dateDomOptionRect = dateDomOptionDom.getBoundingClientRect();
     if (dateDomOptionRect.left + dateDomOptionRect.width > bodyRect.width) {
@@ -806,7 +798,6 @@ window.onload = function () {
       dateDomOptionDom.style.right = 'unset';
       dateDomOptionDom.style.left = '0px';
     }
-    // 当前日期
     const date = new Date();
     const year = date.getFullYear().toString();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -843,45 +834,45 @@ window.onload = function () {
   blockDom.onclick = function () {
     console.log('block');
     new Dialog({
-      title: '内容块',
+      title: '',
       data: [
         {
           type: 'select',
-          label: '类型',
+          label: '',
           name: 'type',
           value: 'iframe',
           required: true,
           options: [
             {
-              label: '网址',
+              label: '',
               value: 'iframe',
             },
             {
-              label: '视频',
+              label: '',
               value: 'video',
             },
           ],
         },
         {
           type: 'number',
-          label: '宽度',
+          label: '',
           name: 'width',
-          placeholder: '请输入宽度（默认页面内宽度）',
+          placeholder: '（）',
         },
         {
           type: 'number',
-          label: '高度',
+          label: '',
           name: 'height',
           required: true,
-          placeholder: '请输入高度',
+          placeholder: '',
         },
         {
           type: 'textarea',
-          label: '地址',
+          label: '',
           height: 100,
           name: 'value',
           required: true,
-          placeholder: '请输入地址',
+          placeholder: '',
         },
       ],
       onConfirm: payload => {
@@ -918,7 +909,7 @@ window.onload = function () {
     });
   };
 
-  // 5. | 搜索&替换 | 打印 |
+  // 5. | & | |
   const searchCollapseDom = document.querySelector<HTMLDivElement>(
     '.menu-item__search__collapse'
   )!;
@@ -930,7 +921,7 @@ window.onload = function () {
   )!;
   const searchDom =
     document.querySelector<HTMLDivElement>('.menu-item__search')!;
-  searchDom.title = `搜索与替换(${isApple ? '⌘' : 'Ctrl'}+F)`;
+  searchDom.title = `(${isApple ? '⌘' : 'Ctrl'}+F)`;
   const searchResultDom =
     searchCollapseDom.querySelector<HTMLLabelElement>('.search-result')!;
   function setSearchResult() {
@@ -994,13 +985,13 @@ window.onload = function () {
     };
 
   const printDom = document.querySelector<HTMLDivElement>('.menu-item__print')!;
-  printDom.title = `打印(${isApple ? '⌘' : 'Ctrl'}+P)`;
+  printDom.title = `(${isApple ? '⌘' : 'Ctrl'}+P)`;
   printDom.onclick = function () {
     console.log('print');
     instance.command.executePrint();
   };
 
-  // 6. 目录显隐 | 页面模式 | 纸张缩放 | 纸张大小 | 纸张方向 | 页边距 | 全屏
+  // 6. | | | | | |
   async function updateCatalog() {
     const catalog = await instance.command.getCatalog();
     const catalogMainDom =
@@ -1015,13 +1006,11 @@ window.onload = function () {
           const catalogItem = catalogItems[c];
           const catalogItemDom = document.createElement('div');
           catalogItemDom.classList.add('catalog-item');
-          // 渲染
           const catalogItemContentDom = document.createElement('div');
           catalogItemContentDom.classList.add('catalog-item__content');
           const catalogItemContentSpanDom = document.createElement('span');
           catalogItemContentSpanDom.innerText = catalogItem.name;
           catalogItemContentDom.append(catalogItemContentSpanDom);
-          // 定位
           catalogItemContentDom.onclick = () => {
             instance.command.executeLocationCatalog(catalogItem.id);
           };
@@ -1029,7 +1018,6 @@ window.onload = function () {
           if (catalogItem.subCatalog && catalogItem.subCatalog.length) {
             appendCatalog(catalogItemDom, catalogItem.subCatalog);
           }
-          // 追加
           parent.append(catalogItemDom);
         }
       };
@@ -1084,7 +1072,6 @@ window.onload = function () {
       instance.command.executePageScaleAdd();
     };
 
-  // 纸张大小
   const paperSizeDom = document.querySelector<HTMLDivElement>('.paper-size')!;
   const paperSizeDomOptionsDom =
     paperSizeDom.querySelector<HTMLDivElement>('.options')!;
@@ -1096,14 +1083,12 @@ window.onload = function () {
     const paperType = li.dataset.paperSize!;
     const [width, height] = paperType.split('*').map(Number);
     instance.command.executePaperSize(width, height);
-    // 纸张状态回显
     paperSizeDomOptionsDom
       .querySelectorAll('li')
       .forEach(child => child.classList.remove('active'));
     li.classList.add('active');
   };
 
-  // 纸张方向
   const paperDirectionDom =
     document.querySelector<HTMLDivElement>('.paper-direction')!;
   const paperDirectionDomOptionsDom =
@@ -1115,53 +1100,51 @@ window.onload = function () {
     const li = evt.target as HTMLLIElement;
     const paperDirection = li.dataset.paperDirection!;
     instance.command.executePaperDirection(<PaperDirection>paperDirection);
-    // 纸张方向状态回显
     paperDirectionDomOptionsDom
       .querySelectorAll('li')
       .forEach(child => child.classList.remove('active'));
     li.classList.add('active');
   };
 
-  // 页面边距
   const paperMarginDom =
     document.querySelector<HTMLDivElement>('.paper-margin')!;
   paperMarginDom.onclick = function () {
     const [topMargin, rightMargin, bottomMargin, leftMargin] =
       instance.command.getPaperMargin();
     new Dialog({
-      title: '页边距',
+      title: '',
       data: [
         {
           type: 'text',
-          label: '上边距',
+          label: '',
           name: 'top',
           required: true,
           value: `${topMargin}`,
-          placeholder: '请输入上边距',
+          placeholder: '',
         },
         {
           type: 'text',
-          label: '下边距',
+          label: '',
           name: 'bottom',
           required: true,
           value: `${bottomMargin}`,
-          placeholder: '请输入下边距',
+          placeholder: '',
         },
         {
           type: 'text',
-          label: '左边距',
+          label: '',
           name: 'left',
           required: true,
           value: `${leftMargin}`,
-          placeholder: '请输入左边距',
+          placeholder: '',
         },
         {
           type: 'text',
-          label: '右边距',
+          label: '',
           name: 'right',
           required: true,
           value: `${rightMargin}`,
-          placeholder: '请输入右边距',
+          placeholder: '',
         },
       ],
       onConfirm: payload => {
@@ -1183,7 +1166,6 @@ window.onload = function () {
     });
   };
 
-  // 全屏
   const fullscreenDom = document.querySelector<HTMLDivElement>('.fullscreen')!;
   fullscreenDom.onclick = toggleFullscreen;
   window.addEventListener('keydown', evt => {
@@ -1222,13 +1204,10 @@ window.onload = function () {
   ];
   const modeElement = document.querySelector<HTMLDivElement>('.editor-mode')!;
   modeElement.onclick = function () {
-    // 模式选择循环
     modeIndex === modeList.length - 1 ? (modeIndex = 0) : modeIndex++;
-    // 设置模式
     const { name, mode } = modeList[modeIndex];
     modeElement.innerText = name;
     instance.command.executeMode(mode);
-    // 设置菜单栏权限视觉反馈
     const isReadonly = mode === EditorMode.READONLY;
     const enableMenuList = ['search', 'print'];
     document.querySelectorAll<HTMLDivElement>('.menu-item>div').forEach(dom => {
@@ -1239,9 +1218,8 @@ window.onload = function () {
     });
   };
 
-  // 8. 内部事件监听
+  // 8.
   instance.listener.rangeStyleChange = function (payload) {
-    // 控件类型
     payload.type === ElementType.SUBSCRIPT
       ? subscriptDom.classList.add('active')
       : subscriptDom.classList.remove('active');
@@ -1264,7 +1242,6 @@ window.onload = function () {
       }
     }
 
-    // 富文本
     fontOptionDom
       .querySelectorAll<HTMLLIElement>('li')
       .forEach(li => li.classList.remove('active'));
@@ -1365,7 +1342,7 @@ window.onload = function () {
       titleSelectDom.innerText = curTitleDom.innerText;
       curTitleDom.classList.add('active');
     } else {
-      titleSelectDom.innerText = '正文';
+      titleSelectDom.innerText = '';
       titleOptionDom.querySelector('li:first-child')!.classList.add('active');
     }
 
@@ -1446,7 +1423,6 @@ window.onload = function () {
   };
 
   const handleContentChange = async function () {
-    // 字数
     const wordCount = await instance.command.getWordCount();
     document.querySelector<HTMLSpanElement>('.word-count')!.innerText = `${
       wordCount || 0

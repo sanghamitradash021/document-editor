@@ -51,9 +51,7 @@ export class Zone {
       isSetCursor: false,
       isCompute: false,
     });
-    // 指示器
     this.drawZoneIndicator();
-    // 回调
     nextTick(() => {
       const listener = this.draw.getListener();
       if (listener.zoneChange) {
@@ -78,10 +76,8 @@ export class Zone {
     const pageHeight = this.draw.getHeight();
     const pageGap = this.draw.getPageGap();
     const preY = pageHeight + pageGap;
-    // 创建指示器容器
     this.indicatorContainer = document.createElement('div');
     this.indicatorContainer.classList.add(`${EDITOR_PREFIX}-zone-indicator`);
-    // 指示器位置
     const header = this.draw.getHeader();
     const footer = this.draw.getFooter();
     const indicatorHeight = isHeaderActive
@@ -100,7 +96,6 @@ export class Zone {
       const indicatorBottomY = isHeaderActive
         ? startY + indicatorHeight + this.INDICATOR_PADDING
         : startY - this.INDICATOR_PADDING;
-      // 标题
       const indicatorTitle = document.createElement('div');
       indicatorTitle.innerText = this.i18n.t(
         `frame.${isHeaderActive ? 'header' : 'footer'}`
@@ -111,7 +106,6 @@ export class Zone {
       }px) scale(${scale})`;
       this.indicatorContainer.append(indicatorTitle);
 
-      // 上边线
       const lineTop = document.createElement('span');
       lineTop.classList.add(`${EDITOR_PREFIX}-zone-indicator-border__top`);
       lineTop.style.top = `${indicatorTopY}px`;
@@ -119,7 +113,6 @@ export class Zone {
       lineTop.style.marginLeft = `${margins[3]}px`;
       this.indicatorContainer.append(lineTop);
 
-      // 左边线
       const lineLeft = document.createElement('span');
       lineLeft.classList.add(`${EDITOR_PREFIX}-zone-indicator-border__left`);
       lineLeft.style.top = `${startY}px`;
@@ -127,7 +120,6 @@ export class Zone {
       lineLeft.style.left = `${indicatorLeftX}px`;
       this.indicatorContainer.append(lineLeft);
 
-      // 下边线
       const lineBottom = document.createElement('span');
       lineBottom.classList.add(
         `${EDITOR_PREFIX}-zone-indicator-border__bottom`
@@ -135,7 +127,6 @@ export class Zone {
       lineBottom.style.top = `${indicatorBottomY}px`;
       this.indicatorContainer.append(lineBottom);
 
-      // 右边线
       const lineRight = document.createElement('span');
       lineRight.classList.add(`${EDITOR_PREFIX}-zone-indicator-border__right`);
       lineRight.style.top = `${startY}px`;

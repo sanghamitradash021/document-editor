@@ -17,7 +17,6 @@ export class Previewer {
   private curElementSrc: string;
   private previewerDrawOption: IPreviewerDrawOption;
   private curPosition: IElementPosition | null;
-  // 拖拽改变尺寸
   private resizerSelection: HTMLDivElement;
   private resizerHandleList: HTMLDivElement[];
   private resizerImageContainer: HTMLDivElement;
@@ -27,7 +26,6 @@ export class Previewer {
   private mousedownX: number;
   private mousedownY: number;
   private curHandleIndex: number;
-  // 预览选区
   private previewerContainer: HTMLDivElement | null;
   private previewerImage: HTMLImageElement | null;
 
@@ -40,7 +38,6 @@ export class Previewer {
     this.curElementSrc = '';
     this.previewerDrawOption = {};
     this.curPosition = null;
-    // 图片尺寸缩放
     const {
       resizerSelection,
       resizerHandleList,
@@ -55,15 +52,13 @@ export class Previewer {
     this.height = 0;
     this.mousedownX = 0;
     this.mousedownY = 0;
-    this.curHandleIndex = 0; // 默认右下角
-    // 图片预览
+    this.curHandleIndex = 0; //
     resizerSelection.ondblclick = this._dblclick.bind(this);
     this.previewerContainer = null;
     this.previewerImage = null;
   }
 
   private _createResizerDom(): IPreviewerCreateResult {
-    // 拖拽边框
     const resizerSelection = document.createElement('div');
     resizerSelection.classList.add(`${EDITOR_PREFIX}-resizer-selection`);
     resizerSelection.style.display = 'none';
@@ -79,7 +74,6 @@ export class Previewer {
       resizerHandleList.push(handleDom);
     }
     this.container.append(resizerSelection);
-    // 拖拽镜像
     const resizerImageContainer = document.createElement('div');
     resizerImageContainer.classList.add(`${EDITOR_PREFIX}-resizer-image`);
     resizerImageContainer.style.display = 'none';
@@ -95,7 +89,6 @@ export class Previewer {
   }
 
   private _keydown = () => {
-    // 有键盘事件触发时，主动销毁拖拽选区
     if (this.resizerSelection.style.display === 'block') {
       this.clearResizer();
       document.removeEventListener('keydown', this._keydown);
@@ -112,11 +105,9 @@ export class Previewer {
     this.mousedownY = evt.y;
     const target = evt.target as HTMLDivElement;
     this.curHandleIndex = Number(target.dataset.index);
-    // 改变光标
     const cursor = window.getComputedStyle(target).cursor;
     document.body.style.cursor = cursor;
     this.canvas.style.cursor = cursor;
-    // 拖拽图片镜像
     this.resizerImage.src = this.curElementSrc;
     this.resizerImageContainer.style.display = 'block';
     const {
@@ -129,13 +120,11 @@ export class Previewer {
     this.resizerImageContainer.style.top = `${top + prePageHeight}px`;
     this.resizerImage.style.width = `${this.curElement.width! * scale}px`;
     this.resizerImage.style.height = `${this.curElement.height! * scale}px`;
-    // 追加全局事件
     const mousemoveFn = this._mousemove.bind(this);
     document.addEventListener('mousemove', mousemoveFn);
     document.addEventListener(
       'mouseup',
       () => {
-        // 改变尺寸
         if (this.curElement && this.curPosition) {
           this.curElement.width = this.width;
           this.curElement.height = this.height;
@@ -146,7 +135,6 @@ export class Previewer {
             this.previewerDrawOption
           );
         }
-        // 还原副作用
         this.resizerImageContainer.style.display = 'none';
         document.removeEventListener('mousemove', mousemoveFn);
         document.body.style.cursor = '';
@@ -209,14 +197,12 @@ export class Previewer {
   private _drawPreviewer() {
     const previewerContainer = document.createElement('div');
     previewerContainer.classList.add(`${EDITOR_PREFIX}-image-previewer`);
-    // 关闭按钮
     const closeBtn = document.createElement('i');
     closeBtn.classList.add('image-close');
     closeBtn.onclick = () => {
       this._clearPreviewer();
     };
     previewerContainer.append(closeBtn);
-    // 图片
     const imgContainer = document.createElement('div');
     imgContainer.classList.add(`${EDITOR_PREFIX}-image-container`);
     const img = document.createElement('img');
@@ -225,7 +211,6 @@ export class Previewer {
     imgContainer.append(img);
     this.previewerImage = img;
     previewerContainer.append(imgContainer);
-    // 操作栏
     let x = 0;
     let y = 0;
     let scaleSize = 1;
@@ -274,7 +259,6 @@ export class Previewer {
     previewerContainer.append(menuContainer);
     this.previewerContainer = previewerContainer;
     document.body.append(previewerContainer);
-    // 拖拽调整位置
     let startX = 0;
     let startY = 0;
     let isAllowDrag = false;
@@ -299,10 +283,8 @@ export class Previewer {
     previewerContainer.onwheel = evt => {
       evt.preventDefault();
       if (evt.deltaY < 0) {
-        // 放大
         scaleSize += 0.1;
       } else {
-        // 缩小
         if (scaleSize - 0.1 <= 0.1) return;
         scaleSize -= 0.1;
       }
@@ -349,7 +331,6 @@ export class Previewer {
     const pageGap = this.draw.getPageGap();
     const handleSize = this.options.resizerSize;
     const preY = this.draw.getPageNo() * (height + pageGap);
-    // 边框
     this.resizerSelection.style.left = `${left}px`;
     this.resizerSelection.style.top = `${top + preY + ascent}px`;
     this.resizerSelection.style.width = `${elementWidth}px`;

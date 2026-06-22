@@ -33,7 +33,6 @@ export class PageNumber {
       },
     } = this.options;
     if (pageNo < fromPageNo) return;
-    // 处理页码格式
     let text = format;
     const pageNoReg = new RegExp(FORMAT_PLACEHOLDER.PAGE_NO);
     if (pageNoReg.test(text)) {
@@ -54,7 +53,7 @@ export class PageNumber {
       text = text.replace(pageCountReg, pageCountText);
     }
     const width = this.draw.getWidth();
-    // 计算y位置
+    // y
     const height =
       pageMode === PageMode.CONTINUITY
         ? this.draw.getCanvasHeight(pageNo)
@@ -64,7 +63,7 @@ export class PageNumber {
     ctx.save();
     ctx.fillStyle = color;
     ctx.font = `${size * scale * PX_PER_PT}px ${font}`;
-    // 计算x位置-居左、居中、居右
+    // x-、、
     let x = 0;
     const margins = this.draw.getMargins();
     const { width: textWidth } = ctx.measureText(text);

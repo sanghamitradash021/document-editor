@@ -11,7 +11,6 @@ import { Draw } from '../Draw';
 export class ListParticle {
   private options: DeepRequired<IEditorOption>;
 
-  // 非递增样式直接返回默认值
   // Bumped from 20 → 40 to give non-incremental markers (disc / square /
   // checkbox / etc.) enough hanging-indent room for the wider glyphs and the
   // 22px marker offset below. Override per list via IListElement.listIndentWidth.
@@ -41,7 +40,6 @@ export class ListParticle {
         curElementList.push(curElement);
       } else {
         if (curElement.listId && curElement.listId !== curListId) {
-          // 列表结束
           if (curElementList.length) {
             const width = this.getListStyleWidth(ctx, curElementList);
             listStyleMap.set(curListId!, width);
@@ -69,14 +67,12 @@ export class ListParticle {
     if (startElement.listIndentWidth) {
       return startElement.listIndentWidth * scale;
     }
-    // 非递增样式返回固定值
     if (
       startElement.listStyle &&
       startElement.listStyle !== ListStyle.DECIMAL
     ) {
       return this.UN_COUNT_STYLE_WIDTH * scale;
     }
-    // 计算列表数量
     const count = listElementList.reduce((pre, cur) => {
       if (cur.value === ZERO) {
         pre += 1;
@@ -84,7 +80,6 @@ export class ListParticle {
       return pre;
     }, 0);
     if (!count) return 0;
-    // 以递增样式最大宽度为准
     const text = `${this.MEASURE_BASE_TEXT.repeat(String(count).length)}${
       KeyMap.PERIOD
     }`;

@@ -25,7 +25,6 @@ export class TextControl implements IControlInstance {
     const { startIndex } = this.control.getRange();
     const startElement = elementList[startIndex];
     const data: IElement[] = [];
-    // 向左查找
     let preIndex = startIndex;
     while (preIndex > 0) {
       const preElement = elementList[preIndex];
@@ -40,7 +39,6 @@ export class TextControl implements IControlInstance {
       }
       preIndex--;
     }
-    // 向右查找
     let nextIndex = startIndex + 1;
     while (nextIndex < elementList.length) {
       const nextElement = elementList[nextIndex];
@@ -61,11 +59,10 @@ export class TextControl implements IControlInstance {
   public setValue(data: IElement[]): number {
     const elementList = this.control.getElementList();
     const range = this.control.getRange();
-    // 收缩边界到Value内
+    // Value
     this.control.shrinkBoundary();
     const { startIndex, endIndex } = range;
     const draw = this.control.getDraw();
-    // 移除选区元素
     if (startIndex !== endIndex) {
       draw.spliceElementList(
         elementList,
@@ -73,10 +70,8 @@ export class TextControl implements IControlInstance {
         endIndex - startIndex
       );
     } else {
-      // 移除空白占位符
       this.control.removePlaceholder(startIndex);
     }
-    // 插入
     const startElement = elementList[startIndex];
     const anchorElement =
       startElement.controlComponent === ControlComponent.PREFIX
@@ -98,7 +93,7 @@ export class TextControl implements IControlInstance {
   public keydown(evt: KeyboardEvent): number {
     const elementList = this.control.getElementList();
     const range = this.control.getRange();
-    // 收缩边界到Value内
+    // Value
     this.control.shrinkBoundary();
     const { startIndex, endIndex } = range;
     const startElement = elementList[startIndex];
@@ -106,7 +101,6 @@ export class TextControl implements IControlInstance {
     const draw = this.control.getDraw();
     // backspace
     if (evt.key === KeyMap.Backspace) {
-      // 移除选区元素
       if (startIndex !== endIndex) {
         draw.spliceElementList(
           elementList,
@@ -124,10 +118,8 @@ export class TextControl implements IControlInstance {
           endElement.controlComponent === ControlComponent.POSTFIX ||
           startElement.controlComponent === ControlComponent.PLACEHOLDER
         ) {
-          // 前缀、后缀、占位符
           return this.control.removeControl(startIndex);
         } else {
-          // 文本
           draw.spliceElementList(elementList, startIndex, 1);
           const value = this.getValue();
           if (!value.length) {
@@ -137,7 +129,6 @@ export class TextControl implements IControlInstance {
         }
       }
     } else if (evt.key === KeyMap.Delete) {
-      // 移除选区元素
       if (startIndex !== endIndex) {
         draw.spliceElementList(
           elementList,
@@ -157,10 +148,8 @@ export class TextControl implements IControlInstance {
           endNextElement.controlComponent === ControlComponent.POSTFIX ||
           startElement.controlComponent === ControlComponent.PLACEHOLDER
         ) {
-          // 前缀、后缀、占位符
           return this.control.removeControl(startIndex);
         } else {
-          // 文本
           draw.spliceElementList(elementList, startIndex + 1, 1);
           const value = this.getValue();
           if (!value.length) {

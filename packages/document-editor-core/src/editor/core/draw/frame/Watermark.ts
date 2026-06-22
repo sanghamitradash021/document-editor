@@ -25,7 +25,6 @@ export class Watermark {
     ctx.globalAlpha = opacity;
     ctx.font = `${size * scale * PX_PER_PT}px ${font}`;
     ctx.fillStyle = color;
-    // 移动到中心位置再旋转
     const measureText = ctx.measureText(data);
     ctx.translate(x, y);
     ctx.rotate((-45 * Math.PI) / 180);

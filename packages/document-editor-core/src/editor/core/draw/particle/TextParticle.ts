@@ -87,11 +87,9 @@ export class TextParticle {
     y: number
   ) {
     this.ctx = ctx;
-    // 主动完成的重设起始点
     if (!this.text) {
       this._setCurXY(x, y);
     }
-    // 样式发生改变
     if (
       (this.curStyle && element.style !== this.curStyle) ||
       element.color !== this.curColor

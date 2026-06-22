@@ -97,17 +97,16 @@ export class Position {
     let index = startIndex;
     for (let i = 0; i < rowList.length; i++) {
       const curRow = rowList[i];
-      // 计算行偏移量（行居中、居右）
       if (curRow.rowFlex === RowFlex.CENTER) {
         x += (innerWidth - curRow.width) / 2;
       } else if (curRow.rowFlex === RowFlex.RIGHT) {
         x += innerWidth - curRow.width;
       }
-      // 列表向右移动-留出列表样式位置
+      // -
       if (curRow.isList) {
         x += curRow.offsetX || 0;
       }
-      // 当前td所在位置
+      // td
       const tablePreX = x;
       const tablePreY = y;
       for (let j = 0; j < curRow.elementList.length; j++) {
@@ -140,7 +139,6 @@ export class Position {
         positionList.push(positionItem);
         index++;
         x += metrics.width;
-        // 计算表格内元素位置
         if (element.type === ElementType.TABLE) {
           const tdGap = tdPadding * 2;
           for (let t = 0; t < element.trList!.length; t++) {
@@ -159,7 +157,6 @@ export class Position {
                 startY: td.y! * scale + tablePreY,
                 innerWidth: (td.width! - tdGap) * scale,
               });
-              // 垂直对齐方式
               if (
                 td.verticalAlign === VerticalAlign.MIDDLE ||
                 td.verticalAlign === VerticalAlign.BOTTOM
@@ -194,7 +191,7 @@ export class Position {
               y = drawRowResult.y;
             }
           }
-          // 恢复初始x、y
+          // x、y
           x = tablePreX;
           y = tablePreY;
         }
@@ -206,14 +203,11 @@ export class Position {
   }
 
   public computePositionList() {
-    // 置空原位置信息
     this.positionList = [];
-    // 按每页行计算
     const innerWidth = this.draw.getInnerWidth();
     const pageRowList = this.draw.getPageRowList();
     const margins = this.draw.getMargins();
     const startX = margins[3];
-    // 起始位置受页眉影响
     const header = this.draw.getHeader();
     const extraHeight = header.getExtraHeight();
     const startY = margins[0] + extraHeight;
@@ -272,7 +266,6 @@ export class Position {
         coordinate: { leftTop, rightTop, leftBottom },
       } = positionList[j];
       if (positionNo !== pageNo) continue;
-      // 命中元素
       if (
         leftTop[0] <= x &&
         rightTop[0] >= x &&
@@ -281,7 +274,6 @@ export class Position {
       ) {
         let curPositionIndex = j;
         const element = elementList[j];
-        // 表格被命中
         if (element.type === ElementType.TABLE) {
           for (let t = 0; t < element.trList!.length; t++) {
             const tr = element.trList![t];
@@ -322,7 +314,6 @@ export class Position {
             }
           }
         }
-        // 图片区域均为命中
         if (
           element.type === ElementType.IMAGE ||
           element.type === ElementType.LATEX
@@ -344,7 +335,6 @@ export class Position {
           };
         }
         let hitLineStartIndex: number | undefined;
-        // 判断是否在文字中间前后
         if (elementList[index].value !== ZERO) {
           const valueWidth = rightTop[0] - leftTop[0];
           if (x < leftTop[0] + valueWidth / 2) {
@@ -361,11 +351,9 @@ export class Position {
         };
       }
     }
-    // 非命中区域
     let isLastArea = false;
     let curPositionIndex = -1;
     let hitLineStartIndex: number | undefined;
-    // 判断是否在表格内
     if (isTable) {
       const { scale } = this.options;
       const { td, tablePosition } = payload;
@@ -382,7 +370,6 @@ export class Position {
         }
       }
     }
-    // 判断所属行是否存在元素
     const lastLetterList = positionList.filter(
       p => p.isLastLetter && p.pageNo === positionNo
     );
@@ -395,12 +382,10 @@ export class Position {
       if (positionNo !== pageNo) continue;
       if (y > leftTop[1] && y <= leftBottom[1]) {
         const isHead = x < this.options.margins[3];
-        // 是否在头部
         if (isHead) {
           const headIndex = positionList.findIndex(
             p => p.pageNo === positionNo && p.rowNo === lastLetterList[j].rowNo
           );
-          // 头部元素为空元素时无需选中
           if (~headIndex) {
             if (positionList[headIndex].value === ZERO) {
               curPositionIndex = headIndex;
@@ -419,24 +404,19 @@ export class Position {
       }
     }
     if (!isLastArea) {
-      // 页眉底部距离页面顶部距离
       const header = this.draw.getHeader();
       const headerBottomY = header.getHeaderTop() + header.getHeight();
-      // 页脚上部距离页面顶部距离
       const footer = this.draw.getFooter();
       const pageHeight = this.draw.getHeight();
       const footerTopY =
         pageHeight - (footer.getFooterBottom() + footer.getHeight());
-      // 判断所属位置是否属于页眉页脚区域
       if (isMainActive) {
-        // 页眉：当前位置小于页眉底部位置
         if (y < headerBottomY) {
           return {
             index: -1,
             zone: EditorZone.HEADER,
           };
         }
-        // 页脚：当前位置大于页脚顶部位置
         if (y > footerTopY) {
           return {
             index: -1,
@@ -444,7 +424,7 @@ export class Position {
           };
         }
       } else {
-        // main区域：当前位置小于页眉底部位置 && 大于页脚顶部位置
+        // main： &&
         if (y <= footerTopY && y >= headerBottomY) {
           return {
             index: -1,
@@ -452,7 +432,6 @@ export class Position {
           };
         }
       }
-      // 当前页最后一行
       return {
         index:
           lastLetterList[lastLetterList.length - 1]?.index ||
@@ -471,7 +450,6 @@ export class Position {
   ): ICurrentPosition | null {
     const positionResult = this.getPositionByXY(payload);
     if (!~positionResult.index) return null;
-    // 移动控件内光标
     if (
       positionResult.isControl &&
       this.draw.getMode() !== EditorMode.READONLY
@@ -502,7 +480,6 @@ export class Position {
       trId,
       tableId,
     } = positionResult;
-    // 设置位置上下文
     this.setPositionContext({
       isTable: isTable || false,
       isCheckbox: isCheckbox || false,

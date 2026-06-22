@@ -1,13 +1,13 @@
 import Editor from '../../../src/editor';
 
-describe('菜单-打印', () => {
+describe('-', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/canvas-editor/');
 
     cy.get('canvas').should('have.length', 2);
   });
 
-  it('打印', () => {
+  it('', () => {
     cy.getEditor().then(async (editor: Editor) => {
       const imageList2 = await editor.command.getImage();
       expect(imageList2.length).to.eq(2);

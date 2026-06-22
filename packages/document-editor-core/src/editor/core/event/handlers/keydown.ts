@@ -39,7 +39,7 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
         evt.preventDefault();
         return;
       }
-      //  Clear the current row alignment
+      // Clear the current row alignment
       const startElement = elementList[startIndex];
       if (isCollapsed && startElement.rowFlex && startElement.value === ZERO) {
         const rowList = draw.getRowList();
@@ -91,11 +91,9 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
     };
     const startElement = elementList[startIndex];
     const endElement = elementList[endIndex];
-    // 列表块内换行
     if (evt.shiftKey && startElement.listId) {
       enterText.listWrap = true;
     }
-    // 标题结尾处回车无需格式化
     if (
       !(
         endElement.titleId &&
@@ -130,14 +128,13 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
     if (isReadonly) return;
     if (index > 0) {
       const curIndex = startIndex - 1;
-      // shift则缩放选区
+      // shift
       let anchorStartIndex = curIndex;
       let anchorEndIndex = curIndex;
       const cursorPosition = position.getCursorPosition();
       if (evt.shiftKey && cursorPosition) {
         if (startIndex !== endIndex) {
           if (startIndex === cursorPosition.index) {
-            // 减小选区
             anchorStartIndex = startIndex;
             anchorEndIndex = endIndex - 1;
           } else {
@@ -164,14 +161,13 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
     if (isReadonly) return;
     if (index < positionList.length) {
       const curIndex = endIndex + 1;
-      // shift则缩放选区
+      // shift
       let anchorStartIndex = curIndex;
       let anchorEndIndex = curIndex;
       const cursorPosition = position.getCursorPosition();
       if (evt.shiftKey && cursorPosition) {
         if (startIndex !== endIndex) {
           if (startIndex === cursorPosition.index) {
-            // 增大选区
             anchorStartIndex = startIndex;
             anchorEndIndex = curIndex;
           } else {
@@ -203,7 +199,6 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
     rangeManager.pendingStyle = null;
     if (isReadonly) return;
     let anchorPosition: IElementPosition = cursorPosition;
-    // 扩大选区时，判断移动光标点
     if (evt.shiftKey) {
       if (startIndex === cursorPosition.index) {
         anchorPosition = positionList[endIndex];
@@ -220,7 +215,6 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
         rightTop: [curRightX],
       },
     } = anchorPosition;
-    // 向上时在首行、向下时在尾行则忽略
     const isUp = evt.key === KeyMap.Up;
     if (
       (isUp && rowIndex === 0) ||
@@ -228,7 +222,6 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
     ) {
       return;
     }
-    // 查找下一行信息
     const probablePosition: IElementPosition[] = [];
     if (isUp) {
       let p = index - 1;
@@ -259,7 +252,6 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
         probablePosition.push(position);
       }
     }
-    // 查找下一行位置：第一个存在交叉宽度的元素位置
     let nextIndex = 0;
     for (let p = 0; p < probablePosition.length; p++) {
       const nextPosition = probablePosition[p];
@@ -278,7 +270,7 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
     }
     if (!nextIndex) return;
     const curIndex = nextIndex;
-    // shift则缩放选区
+    // shift
     let anchorStartIndex = curIndex;
     let anchorEndIndex = curIndex;
     if (evt.shiftKey) {
@@ -337,9 +329,7 @@ export function keydown(evt: KeyboardEvent, host: CanvasEvent) {
     }
     evt.preventDefault();
   } else if (evt.key === KeyMap.ESC) {
-    // 退出格式刷
     host.clearPainterStyle();
-    // 退出页眉页脚编辑
     const zoneManager = draw.getZone();
     if (!zoneManager.isMainActive()) {
       zoneManager.setZone(EditorZone.MAIN);

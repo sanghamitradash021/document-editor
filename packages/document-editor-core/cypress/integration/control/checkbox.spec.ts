@@ -1,6 +1,6 @@
 import Editor, { ControlType, ElementType } from '../../../src/editor';
 
-describe('控件-复选框', () => {
+describe('-', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/canvas-editor/');
 
@@ -10,7 +10,7 @@ describe('控件-复选框', () => {
   const elementType: ElementType = <ElementType>'control';
   const controlType: ControlType = <ControlType>'checkbox';
 
-  it('复选框', () => {
+  it('', () => {
     cy.getEditor().then((editor: Editor) => {
       editor.command.executeSelectAll();
 
@@ -26,11 +26,11 @@ describe('控件-复选框', () => {
             value: null,
             valueSets: [
               {
-                value: '有',
+                value: '',
                 code: '98175',
               },
               {
-                value: '无',
+                value: '',
                 code: '98176',
               },
             ],

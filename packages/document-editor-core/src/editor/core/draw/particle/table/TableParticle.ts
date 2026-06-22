@@ -58,13 +58,11 @@ export class TableParticle {
     const originalElementList = this.draw.getOriginalElementList();
     const element = originalElementList[index!];
     const curTrList = element.trList!;
-    // 非跨列直接返回光标所在单元格
     if (!isCrossRowCol) {
       return [[curTrList[trIndex!].tdList[tdIndex!]]];
     }
     let startTd = curTrList[startTrIndex!].tdList[startTdIndex!];
     let endTd = curTrList[endTrIndex!].tdList[endTdIndex!];
-    // 交换起始位置
     if (startTd.x! > endTd.x! || startTd.y! > endTd.y!) {
       // prettier-ignore
       [startTd, endTd] = [endTd, startTd]
@@ -73,7 +71,6 @@ export class TableParticle {
     const endColIndex = endTd.colIndex! + (endTd.colspan - 1);
     const startRowIndex = startTd.rowIndex!;
     const endRowIndex = endTd.rowIndex! + (endTd.rowspan - 1);
-    // 选区行列
     const rowCol: ITd[][] = [];
     for (let t = 0; t < curTrList.length; t++) {
       const tr = curTrList[t];
@@ -99,20 +96,20 @@ export class TableParticle {
   }
 
   // private _drawOuterBorder(payload: IDrawTableBorderOption) {
-  //   const { ctx, startX, startY, width, height, isDrawFullBorder } = payload
-  //   ctx.beginPath()
-  //   const x = Math.round(startX)
-  //   const y = Math.round(startY)
-  //   ctx.translate(0.5, 0.5)
-  //   if (isDrawFullBorder) {
-  //     ctx.rect(x, y, width, height)
-  //   } else {
-  //     ctx.moveTo(x, y + height)
-  //     ctx.lineTo(x, y)
-  //     ctx.lineTo(x + width, y)
-  //   }
-  //   ctx.stroke()
-  //   ctx.translate(-0.5, -0.5)
+  // const { ctx, startX, startY, width, height, isDrawFullBorder } = payload
+  // ctx.beginPath()
+  // const x = Math.round(startX)
+  // const y = Math.round(startY)
+  // ctx.translate(0.5, 0.5)
+  // if (isDrawFullBorder) {
+  // ctx.rect(x, y, width, height)
+  // } else {
+  // ctx.moveTo(x, y + height)
+  // ctx.lineTo(x, y)
+  // ctx.lineTo(x + width, y)
+  // }
+  // ctx.stroke()
+  // ctx.translate(-0.5, -0.5)
   // }
 
   private _drawOuterBorderWithBg(
@@ -169,14 +166,13 @@ export class TableParticle {
     const tableHeight = element.height! * scale;
     const isExternalBorderType = borderType === TableBorder.EXTERNAL;
     ctx.save();
-    // 渲染边框
     // this._drawOuterBorder({
-    //   ctx,
-    //   startX,
-    //   startY,
-    //   width: tableWidth,
-    //   height: tableHeight,
-    //   isDrawFullBorder: isExternalBorderType
+    // ctx,
+    // startX,
+    // startY,
+    // width: tableWidth,
+    // height: tableHeight,
+    // isDrawFullBorder: isExternalBorderType
     // })
 
     this._drawOuterBorderWithBg({
@@ -204,7 +200,6 @@ export class TableParticle {
     }
 
     // if (!isExternalBorderType) {
-    // 渲染表格
     for (let t = 0; t < trList.length; t++) {
       const tr = trList[t];
       for (let d = 0; d < tr.tdList.length; d++) {
@@ -216,7 +211,6 @@ export class TableParticle {
         const x = Math.round(td.x! * scale + startX + width);
         const y = Math.round(td.y! * scale + startY);
         ctx.translate(0.5, 0.5);
-        // 绘制线条
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.strokeStyle = td.borderBgRight
@@ -258,21 +252,21 @@ export class TableParticle {
         ctx.stroke();
         ctx.closePath();
 
-        //         type Border = {
-        //   color?: string
-        //   width?: number
+        // type Border = {
+        // color?: string
+        // width?: number
         // }
 
         // const bottomCandidates: Border[] = [
-        //   { color: td.borderBgBottom, width: td.borderWidthBottom },
-        //   { color: trNext?.borderBgTop, width: trNext?.borderWidthTop }
+        // { color: td.borderBgBottom, width: td.borderWidthBottom },
+        // { color: trNext?.borderBgTop, width: trNext?.borderWidthTop }
         // ].filter(b => !!b.color)
 
         // const chosen: Border = bottomCandidates.length
-        //   ? bottomCandidates.reduce((a, b) =>
-        //       (b.width ?? 0) > (a.width ?? 0) ? b : a
-        //     )
-        //   : { color: 'black', width: 1 }
+        // ? bottomCandidates.reduce((a, b) =>
+        // (b.width ?? 0) > (a.width ?? 0) ? b : a
+        // )
+        // : { color: 'black', width: 1 }
 
         // const separatorY = y + height
 
@@ -393,25 +387,22 @@ export class TableParticle {
     let y = 0;
     for (let t = 0; t < trList.length; t++) {
       const tr = trList[t];
-      // 表格最后一行
       const isLastTr = trList.length - 1 === t;
-      // 当前行最小高度
       let rowMinHeight = 0;
       for (let d = 0; d < tr.tdList.length; d++) {
         const td = tr.tdList[d];
-        // 计算之前行x轴偏移量
+        // x
         let offsetXIndex = 0;
         if (trList.length > 1 && t !== 0) {
           for (let pT = 0; pT < t; pT++) {
             const pTr = trList[pT];
-            // 相同x轴是否存在跨行
+            // x
             for (let pD = 0; pD < pTr.tdList.length; pD++) {
               const pTd = pTr.tdList[pD];
               const pTdX = pTd.x!;
               const pTdY = pTd.y!;
               const pTdWidth = pTd.width!;
               const pTdHeight = pTd.height!;
-              // 小于
               if (pTdX < x) continue;
               if (pTdX > x) break;
               if (pTd.x === x && pTdY + pTdHeight > y) {
@@ -421,7 +412,6 @@ export class TableParticle {
             }
           }
         }
-        // 计算格列数
         let colIndex = 0;
         const preTd = tr.tdList[d - 1];
         if (preTd) {
@@ -432,7 +422,6 @@ export class TableParticle {
         } else {
           colIndex += offsetXIndex;
         }
-        // 计算格宽高
         let width = 0;
         for (let col = 0; col < td.colspan; col++) {
           width += colgroup[col + colIndex].width;
@@ -441,13 +430,13 @@ export class TableParticle {
         for (let row = 0; row < td.rowspan; row++) {
           height += trList[row + t].height;
         }
-        // y偏移量
+        // y
         if (rowMinHeight === 0 || rowMinHeight > height) {
           rowMinHeight = height;
         }
-        // 当前行最后一个td
+        // td
         const isLastRowTd = tr.tdList.length - 1 === d;
-        // 当前列最后一个td
+        // td
         let isLastColTd = isLastTr;
         if (!isLastColTd) {
           if (td.rowspan > 1) {
@@ -455,21 +444,21 @@ export class TableParticle {
             isLastColTd = td.rowspan - 1 === nextTrLength;
           }
         }
-        // 当前表格最后一个td
+        // td
         const isLastTd = isLastTr && isLastRowTd;
         td.isLastRowTd = isLastRowTd;
         td.isLastColTd = isLastColTd;
         td.isLastTd = isLastTd;
-        // 修改当前格clientBox
+        // clientBox
         td.x = x;
         td.y = y;
         td.width = width;
         td.height = height;
         td.rowIndex = t;
         td.colIndex = colIndex;
-        // 当前列x轴累加
+        // x
         x += width;
-        // 一行中的最后td
+        // td
         if (isLastRowTd && !isLastTd) {
           x = 0;
           y += rowMinHeight;
@@ -494,11 +483,10 @@ export class TableParticle {
       startTrIndex,
       endTrIndex,
     } = this.range.getRange();
-    // 存在跨行/列
+    // /
     if (!isCrossRowCol) return;
     let startTd = trList[startTrIndex!].tdList[startTdIndex!];
     let endTd = trList[endTrIndex!].tdList[endTdIndex!];
-    // 交换起始位置
     if (startTd.x! > endTd.x! || startTd.y! > endTd.y!) {
       [startTd, endTd] = [endTd, startTd];
     }

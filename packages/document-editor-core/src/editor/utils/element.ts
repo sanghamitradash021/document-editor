@@ -70,17 +70,13 @@ export function formatElementList(
   let i = 0;
   while (i < elementList.length) {
     let el = elementList[i];
-    // 优先处理虚拟元素
     if (el.type === ElementType.TITLE) {
-      // 移除父节点
       elementList.splice(i, 1);
-      // 格式化元素
       const valueList = el.valueList || [];
       formatElementList(valueList, {
         ...options,
         isHandleFirstElement: false,
       });
-      // 追加节点
       if (valueList.length) {
         const titleId = getUUID();
         const titleOptions = editorOptions.title;
@@ -90,7 +86,6 @@ export function formatElementList(
             value.titleId = titleId;
             value.level = el.level;
           }
-          // 文本型元素设置字体及加粗
           if (isTextLikeElement(value)) {
             if (!value.size) {
               value.size = titleOptions[titleSizeMapping[value.level!]];
@@ -105,14 +100,11 @@ export function formatElementList(
       }
       i--;
     } else if (el.type === ElementType.LIST) {
-      // 移除父节点
       elementList.splice(i, 1);
-      // 格式化元素
       const valueList = el.valueList || [];
       formatElementList(valueList, {
         ...options,
       });
-      // 追加节点
       if (valueList.length) {
         const listId = getUUID();
         for (let v = 0; v < valueList.length; v++) {
@@ -160,11 +152,8 @@ export function formatElementList(
         }
       }
     } else if (el.type === ElementType.HYPERLINK) {
-      // 移除父节点
       elementList.splice(i, 1);
-      // 元素展开
       const valueList = unzipElementList(el.valueList || []);
-      // 追加节点
       if (valueList.length) {
         const hyperlinkId = getUUID();
         for (let v = 0; v < valueList.length; v++) {
@@ -178,11 +167,8 @@ export function formatElementList(
       }
       i--;
     } else if (el.type === ElementType.DATE) {
-      // 移除父节点
       elementList.splice(i, 1);
-      // 元素展开
       const valueList = unzipElementList(el.valueList || []);
-      // 追加节点
       if (valueList.length) {
         const dateId = getUUID();
         for (let v = 0; v < valueList.length; v++) {
@@ -199,14 +185,11 @@ export function formatElementList(
       const { prefix, postfix, value, placeholder, code, type, valueSets } =
         el.control!;
       const controlId = getUUID();
-      // 移除父节点
       elementList.splice(i, 1);
-      // 前后缀个性化设置
       const thePrePostfixArgs: Pick<IElement, 'color'> = {};
       if (editorOptions && editorOptions.control) {
         thePrePostfixArgs.color = editorOptions.control.bracketColor;
       }
-      // 前缀
       const prefixStrList = splitText(prefix || defaultControlOption.prefix);
       for (let p = 0; p < prefixStrList.length; p++) {
         const value = prefixStrList[p];
@@ -220,7 +203,6 @@ export function formatElementList(
         });
         i++;
       }
-      // 值
       if (
         (value && value.length) ||
         type === ControlType.CHECKBOX ||
@@ -230,7 +212,7 @@ export function formatElementList(
         if (type === ControlType.CHECKBOX) {
           const codeList = code ? code.split(',') : [];
           if (Array.isArray(valueSets) && valueSets.length) {
-            // 拆分valueList优先使用其属性
+            // valueList
             const valueStyleList = valueList.reduce(
               (pre, cur) =>
                 pre.concat(
@@ -241,7 +223,7 @@ export function formatElementList(
             let valueStyleIndex = 0;
             for (let v = 0; v < valueSets.length; v++) {
               const valueSet = valueSets[v];
-              // checkbox组件
+              // checkbox
               elementList.splice(i, 0, {
                 controlId,
                 value: '',
@@ -254,7 +236,6 @@ export function formatElementList(
                 },
               });
               i++;
-              // 文本
               const valueStrList = splitText(valueSet.value);
               for (let e = 0; e < valueStrList.length; e++) {
                 const value = valueStrList[e];
@@ -323,7 +304,6 @@ export function formatElementList(
           i++;
         }
       }
-      // 后缀
       const postfixStrList = splitText(postfix || defaultControlOption.postfix);
       for (let p = 0; p < postfixStrList.length; p++) {
         const value = postfixStrList[p];
@@ -402,7 +382,6 @@ export function zipElementList(payload: IElement[]): IElement[] {
   let e = 0;
   while (e < elementList.length) {
     let element = elementList[e];
-    // 上下文首字符（占位符）
     if (
       e === 0 &&
       element.value === ZERO &&
@@ -411,9 +390,7 @@ export function zipElementList(payload: IElement[]): IElement[] {
       e++;
       continue;
     }
-    // 优先处理虚拟元素，后表格、超链接、日期、控件特殊处理
     if (element.titleId && element.level) {
-      // 标题处理
       const titleId = element.titleId;
       const level = element.level;
       const titleElement: IElement = {
@@ -435,7 +412,6 @@ export function zipElementList(payload: IElement[]): IElement[] {
       titleElement.valueList = zipElementList(valueList);
       element = titleElement;
     } else if (element.listId && element.listType) {
-      // 列表处理
       const listId = element.listId;
       const listType = element.listType;
       const listStyle = element.listStyle;
@@ -499,7 +475,6 @@ export function zipElementList(payload: IElement[]): IElement[] {
         }
       }
     } else if (element.type === ElementType.HYPERLINK) {
-      // 超链接处理
       const hyperlinkId = element.hyperlinkId;
       const hyperlinkElement: IElement = {
         type: ElementType.HYPERLINK,
@@ -542,7 +517,6 @@ export function zipElementList(payload: IElement[]): IElement[] {
       dateElement.valueList = zipElementList(valueList);
       element = dateElement;
     } else if (element.type === ElementType.CONTROL) {
-      // 控件处理
       const controlId = element.controlId;
       const control = element.control!;
       const controlElement: IElement = {
@@ -567,7 +541,6 @@ export function zipElementList(payload: IElement[]): IElement[] {
       controlElement.control!.value = zipElementList(valueList);
       element = controlElement;
     }
-    // 组合元素
     const pickElement = pickElementAttr(element);
     if (
       !element.type ||
@@ -626,7 +599,7 @@ export function getAnchorElement(
   const anchorElement = elementList[anchorIndex];
   if (!anchorElement) return null;
   const anchorNextElement = elementList[anchorIndex + 1];
-  // 非列表元素 && 当前元素是换行符 && 下一个元素不是换行符 则以下一个元素作为参考元素
+  // && &&
   return !anchorElement.listId &&
     anchorElement.value === ZERO &&
     anchorNextElement &&
@@ -657,7 +630,6 @@ export function formatElementContext(
     ) {
       break;
     }
-    // 定位元素非列表，无需处理粘贴列表的上下文
     if (!copyElement.listId && targetElement.type === ElementType.LIST) {
       targetElement.valueList?.forEach(valueItem => {
         cloneProperty<IElement>(TABLE_CONTEXT_ATTR, copyElement, valueItem);
@@ -725,7 +697,6 @@ export function createDomFromElementList(
     const clipboardDom = document.createElement('div');
     for (let e = 0; e < payload.length; e++) {
       const element = payload[e];
-      // 构造表格
       if (element.type === ElementType.TABLE) {
         const tableDom: HTMLTableElement = document.createElement('table');
         const trList = element.trList!;
@@ -769,7 +740,6 @@ export function createDomFromElementList(
         if (element.listStyle) {
           list.style.listStyleType = listStyleCSSMapping[element.listStyle];
         }
-        // 按照换行符拆分
         let curListIndex = 0;
         const listElementListMap: Map<number, IElement[]> = new Map();
         const zipList = zipElementList(element.valueList!);
@@ -835,7 +805,6 @@ export function createDomFromElementList(
           text = element.value;
         }
         if (!text) continue;
-        // 前一个元素是标题，移除首行换行符
         if (payload[e - 1]?.type === ElementType.TITLE) {
           text = text.replace(/^\n/, '');
         }
@@ -869,17 +838,15 @@ export function convertTextNodeToElement(
     italic: style.fontStyle.includes('italic'),
     size: Math.floor(parseFloat(style.fontSize)),
   };
-  // 元素类型-默认文本
+  // -
   if (anchorNode.nodeName === 'SUB' || style.verticalAlign === 'sub') {
     element.type = ElementType.SUBSCRIPT;
   } else if (anchorNode.nodeName === 'SUP' || style.verticalAlign === 'super') {
     element.type = ElementType.SUPERSCRIPT;
   }
-  // 行对齐
   if (rowFlex !== RowFlex.LEFT) {
     element.rowFlex = rowFlex;
   }
-  // 高亮色
   if (style.backgroundColor !== 'rgba(0, 0, 0, 0)') {
     element.highlight = style.backgroundColor;
   }
@@ -905,7 +872,7 @@ export function getElementListByHTML(
       const childNodes = dom.childNodes;
       for (let n = 0; n < childNodes.length; n++) {
         const node = childNodes[n];
-        // br元素与display:block元素需换行
+        // brdisplay:block
         if (node.nodeName === 'BR') {
           elementList.push({
             value: '\n',
@@ -993,7 +960,6 @@ export function getElementListByHTML(
             colgroup: [],
             trList: [],
           };
-          // 基础数据
           const rowElements = Array.from(tableElement.rows).filter(
             trElement => trElement.closest('table') === tableElement
           );
@@ -1028,7 +994,6 @@ export function getElementListByHTML(
             }
           });
           if (element.trList!.length) {
-            // 列选项数据
             const tdCount = element.trList![0].tdList.reduce(
               (pre, cur) => pre + cur.colspan,
               0
@@ -1066,7 +1031,7 @@ export function getElementListByHTML(
       }
     }
   }
-  // 追加dom
+  // dom
   const clipboardDom = document.createElement('div');
   clipboardDom.innerHTML = htmlText;
   document.body.appendChild(clipboardDom);
@@ -1077,9 +1042,8 @@ export function getElementListByHTML(
     }
   });
   deleteNodes.forEach(node => node.remove());
-  // 搜索文本节点
   findTextNode(clipboardDom);
-  // 移除dom
+  // dom
   clipboardDom.remove();
   return elementList;
 }
