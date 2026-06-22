@@ -49,11 +49,10 @@ export class ColorPicker {
     titleContainer.append(titleSpan);
     titleContainer.append(titleClose);
     signatureContainer.append(titleContainer);
-    // 操作区
+
     const operationContainer = document.createElement('div');
     operationContainer.classList.add('signature-operation');
 
-    // 绘图区
     const canvasContainer = document.createElement('div');
     canvasContainer.classList.add('signature-canvas');
     const colorInput = document.createElement('input');
@@ -61,10 +60,10 @@ export class ColorPicker {
     colorInput.setAttribute('id', 'td-bgcolor');
     canvasContainer.append(colorInput);
     signatureContainer.append(canvasContainer);
-    // 按钮容器
+
     const menuContainer = document.createElement('div');
     menuContainer.classList.add('signature-menu');
-    // 取消按钮
+
     const cancelBtn = document.createElement('button');
     cancelBtn.classList.add('signature-menu__cancel');
     cancelBtn.append(document.createTextNode('Cancel'));
@@ -76,7 +75,7 @@ export class ColorPicker {
       this._dispose();
     };
     menuContainer.append(cancelBtn);
-    // 确认按钮
+
     const confirmBtn = document.createElement('button');
     confirmBtn.append(document.createTextNode('Submit'));
     confirmBtn.type = 'submit';
