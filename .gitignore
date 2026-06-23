@@ -22,6 +22,7 @@ packages/**/docusaurus/build/
 packages/**/docusaurus/.docusaurus/
 documentation/build/
 documentation/.docusaurus/
+packages/document-editor-core/docs/
 packages/document-editor-react/docs/
 
 # misc
